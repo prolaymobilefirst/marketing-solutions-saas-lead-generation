@@ -3,7 +3,11 @@ CLAUDE.md
 results-backup.html
 /docs
 /designs
+/compressed
+/pagespeed
 css/styles.css
 js/layout.js
 js/quiz.js
 js/webhook.js
+.git-credentials.local
+deploy.sh
