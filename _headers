@@ -1,0 +1,22 @@
+# Netlify cache-control headers
+# Versioned assets: cache 1 year (immutable — filenames must change on update)
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML pages: always revalidate (CDN may cache but must check for freshness)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Root index
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Partials: short cache so updates propagate quickly
+/partials/*
+  Cache-Control: public, max-age=300

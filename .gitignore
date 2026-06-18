@@ -1,0 +1,9 @@
+.vscode
+CLAUDE.md
+results-backup.html
+/docs
+/designs
+css/styles.css
+js/layout.js
+js/quiz.js
+js/webhook.js
