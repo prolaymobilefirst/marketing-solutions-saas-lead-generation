@@ -1,5 +1,9 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/downloads/:path*", "destination": "/", "permanent": false },
+    { "source": "/server/:path*", "destination": "/", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/css/(.*)",

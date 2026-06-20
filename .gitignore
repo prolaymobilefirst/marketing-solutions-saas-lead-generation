@@ -11,3 +11,24 @@ js/quiz.js
 js/webhook.js
 .git-credentials.local
 deploy.sh
+
+# Secrets (PDF_TOKEN_SECRET, MAKE_WEBHOOK_URL, etc.) — never commit local env files
+.env
+.env.local
+.env.*.local
+
+# Netlify/Vercel CLI local project-link cache (created by `netlify dev`/`vercel dev`)
+.netlify
+.vercel
+
+# Node (no dependencies are checked in, but ignore in case any get installed locally)
+node_modules
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea

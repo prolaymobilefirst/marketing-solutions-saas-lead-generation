@@ -1,6 +1,32 @@
 [build]
   publish = "."
 
+[functions]
+  directory = "netlify/functions"
+  included_files = ["server/assets/sample.pdf"]
+
+# Proxy /api/* to Netlify Functions so client-side code can use the same
+# path on Netlify and Vercel.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# The PDF must never be reachable as a static file — these are defense in
+# depth (the file isn't published under these paths to begin with).
+[[redirects]]
+  from = "/downloads/*"
+  to = "/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/server/*"
+  to = "/"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/:splat.html"

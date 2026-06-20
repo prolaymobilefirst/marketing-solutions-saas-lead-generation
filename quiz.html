@@ -22,22 +22,27 @@
       <div class="progress-steps">
         <div class="ps-item" id="ps-1">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 1&nbsp;: Statut</span>
+          <span class="ps-label">Étape 1&nbsp;: Clientèle</span>
         </div>
         <div class="ps-line" id="ps-line-1" aria-hidden="true"></div>
         <div class="ps-item" id="ps-2">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 2&nbsp;: Volume</span>
+          <span class="ps-label">Étape 2&nbsp;: Statut</span>
         </div>
         <div class="ps-line" id="ps-line-2" aria-hidden="true"></div>
         <div class="ps-item" id="ps-3">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 3&nbsp;: Connexion</span>
+          <span class="ps-label">Étape 3&nbsp;: Volume</span>
         </div>
         <div class="ps-line" id="ps-line-3" aria-hidden="true"></div>
         <div class="ps-item" id="ps-4">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 4&nbsp;: Résultat</span>
+          <span class="ps-label">Étape 4&nbsp;: Connexion</span>
+        </div>
+        <div class="ps-line" id="ps-line-4" aria-hidden="true"></div>
+        <div class="ps-item" id="ps-5">
+          <span class="ps-circle" aria-hidden="true"></span>
+          <span class="ps-label">Étape 5&nbsp;: Résultat</span>
         </div>
       </div>
     </nav>
@@ -48,10 +53,48 @@
       <div class="quiz-card">
       <div class="quiz-inner">
 
-        <!-- ════ STEP 1 — STATUT ════ -->
-        <div class="quiz-step active" id="step-1" data-step="1" aria-label="Étape 1 : Votre statut d'entreprise">
+        <!-- ════ STEP 1 — CLIENTÈLE ════ -->
+        <div class="quiz-step active" id="step-1" data-step="1" aria-label="Étape 1 : Votre type de clientèle">
 
-          <p class="step-eyebrow">Étape 1 : Votre Statut d'Entreprise</p>
+          <p class="step-eyebrow">Étape 1 : Votre Type de Clientèle</p>
+          <h1 class="quiz-question">Qui sont vos clients&nbsp;?</h1>
+
+          <div class="options-grid options-grid-3">
+            <button class="option-card" data-value="b2c" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/entrepreneur-individuel.webp" alt="" aria-hidden="true" />
+              <div class="option-text">
+                <span class="option-title">100% Particuliers</span>
+                <span class="option-sub">( B2C )</span>
+              </div>
+            </button>
+            <button class="option-card" data-value="b2b" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/bussinessman.webp" alt="" aria-hidden="true" />
+              <div class="option-text">
+                <span class="option-title">100% Entreprises</span>
+                <span class="option-sub">( B2B )</span>
+              </div>
+            </button>
+            <button class="option-card" data-value="mixte" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/pme.webp" alt="" aria-hidden="true" />
+              <div class="option-text">
+                <span class="option-title">Mixte</span>
+                <span class="option-sub">( Particuliers et Entreprises )</span>
+              </div>
+            </button>
+          </div>
+
+          <p class="selection-error" id="error-1" role="alert">Veuillez sélectionner une option pour continuer.</p>
+
+          <button class="btn-cta btn-next" id="next-1" type="button" data-target="2" disabled>
+            Confirmer et passer à l'étape suivante
+          </button>
+
+        </div>
+
+        <!-- ════ STEP 2 — STATUT ════ -->
+        <div class="quiz-step" id="step-2" data-step="2" aria-label="Étape 2 : Votre statut d'entreprise">
+
+          <p class="step-eyebrow">Étape 2 : Votre Statut d'Entreprise</p>
           <h1 class="quiz-question">Quel est le statut juridique actuel de votre entreprise&nbsp;?</h1>
 
           <div class="options-grid">
@@ -85,18 +128,22 @@
             </button>
           </div>
 
-          <p class="selection-error" id="error-1" role="alert">Veuillez sélectionner une option pour continuer.</p>
+          <p class="selection-error" id="error-2" role="alert">Veuillez sélectionner une option pour continuer.</p>
 
-          <button class="btn-cta btn-next" id="next-1" type="button" data-target="2" disabled>
+          <button class="btn-cta btn-next" id="next-2" type="button" data-target="3" disabled>
             Confirmer mon statut et passer à l'étape suivante
           </button>
 
+          <div class="quiz-step-nav">
+            <button class="btn-back" type="button" data-target="1">← Retour</button>
+          </div>
+
         </div>
 
-        <!-- ════ STEP 2 — VOLUME ════ -->
-        <div class="quiz-step" id="step-2" data-step="2" aria-label="Étape 2 : Votre volume d'activité">
+        <!-- ════ STEP 3 — VOLUME ════ -->
+        <div class="quiz-step" id="step-3" data-step="3" aria-label="Étape 3 : Votre volume d'activité">
 
-          <p class="step-eyebrow">Étape 2 : Votre Volume d'Activité</p>
+          <p class="step-eyebrow">Étape 3 : Votre Volume d'Activité</p>
           <h1 class="quiz-question">Quel est votre chiffre d'affaires annuel approximatif&nbsp;?</h1>
 
           <div class="options-grid">
@@ -130,22 +177,22 @@
             </button>
           </div>
 
-          <p class="selection-error" id="error-2" role="alert">Veuillez sélectionner une option pour continuer.</p>
+          <p class="selection-error" id="error-3" role="alert">Veuillez sélectionner une option pour continuer.</p>
 
-          <button class="btn-cta btn-next" id="next-2" type="button" data-target="3" disabled>
+          <button class="btn-cta btn-next" id="next-3" type="button" data-target="4" disabled>
             Confirmer mon volume et passer à l'étape suivante
           </button>
 
           <div class="quiz-step-nav">
-            <button class="btn-back" type="button" data-target="1">← Retour</button>
+            <button class="btn-back" type="button" data-target="2">← Retour</button>
           </div>
 
         </div>
 
-        <!-- ════ STEP 3 — CONNEXION ════ -->
-        <div class="quiz-step" id="step-3" data-step="3" aria-label="Étape 3 : Votre connexion comptable">
+        <!-- ════ STEP 4 — CONNEXION ════ -->
+        <div class="quiz-step" id="step-4" data-step="4" aria-label="Étape 4 : Votre connexion comptable">
 
-          <p class="step-eyebrow">Étape 3 : Connexion à votre outil comptable</p>
+          <p class="step-eyebrow">Étape 4 : Connexion à votre outil comptable</p>
           <h1 class="quiz-question">Comment gérez-vous votre comptabilité actuellement&nbsp;?</h1>
 
           <div class="options-grid">
@@ -179,14 +226,14 @@
             </button>
           </div>
 
-          <p class="selection-error" id="error-3" role="alert">Veuillez sélectionner une option pour continuer.</p>
+          <p class="selection-error" id="error-4" role="alert">Veuillez sélectionner une option pour continuer.</p>
 
-          <button class="btn-cta btn-next" id="next-3" type="button" data-target="results" disabled>
+          <button class="btn-cta btn-next" id="next-4" type="button" data-target="results" disabled>
             Confirmer et voir mon résultat
           </button>
 
           <div class="quiz-step-nav">
-            <button class="btn-back" type="button" data-target="2">← Retour</button>
+            <button class="btn-back" type="button" data-target="3">← Retour</button>
           </div>
 
         </div>
