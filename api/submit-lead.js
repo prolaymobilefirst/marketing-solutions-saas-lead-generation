@@ -27,5 +27,14 @@ module.exports = async (req, res) => {
     return;
   }
 
-  res.status(200).json({ ok: true, token: issueToken() });
+  let token;
+  try {
+    token = issueToken();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: 'server_misconfigured' });
+    return;
+  }
+
+  res.status(200).json({ ok: true, token });
 };

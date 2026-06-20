@@ -7,7 +7,15 @@ const { verifyToken } = require('../lib/pdf-token');
 module.exports = async (req, res) => {
   const token = req.query && req.query.token;
 
-  if (!verifyToken(token)) {
+  let valid;
+  try {
+    valid = verifyToken(token);
+  } catch (err) {
+    console.error(err);
+    valid = false;
+  }
+
+  if (!valid) {
     res.writeHead(302, { Location: '/' });
     res.end();
     return;

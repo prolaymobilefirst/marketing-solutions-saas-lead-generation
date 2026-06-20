@@ -7,7 +7,15 @@ const { verifyToken } = require('../../lib/pdf-token');
 exports.handler = async (event) => {
   const token = event.queryStringParameters && event.queryStringParameters.token;
 
-  if (!verifyToken(token)) {
+  let valid;
+  try {
+    valid = verifyToken(token);
+  } catch (err) {
+    console.error(err);
+    valid = false;
+  }
+
+  if (!valid) {
     return { statusCode: 302, headers: { Location: '/' }, body: '' };
   }
 
