@@ -36,7 +36,7 @@
               <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <span class="ps-label">Étape 2&nbsp;: Statut</span>
+          <span class="ps-label">Étape 2&nbsp;: Volume</span>
         </div>
         <div class="ps-line done" id="ps-line-2" aria-hidden="true"></div>
         <div class="ps-item done" id="ps-3">
@@ -45,7 +45,7 @@
               <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <span class="ps-label">Étape 3&nbsp;: Volume</span>
+          <span class="ps-label">Étape 3&nbsp;: Connexion</span>
         </div>
         <div class="ps-line done" id="ps-line-3" aria-hidden="true"></div>
         <div class="ps-item done" id="ps-4">
@@ -54,16 +54,7 @@
               <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <span class="ps-label">Étape 4&nbsp;: Connexion</span>
-        </div>
-        <div class="ps-line done" id="ps-line-4" aria-hidden="true"></div>
-        <div class="ps-item done" id="ps-5">
-          <span class="ps-circle" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="ps-label">Étape 5&nbsp;: Résultat</span>
+          <span class="ps-label">Étape 4&nbsp;: Résultat</span>
         </div>
       </div>
     </nav>
@@ -74,7 +65,7 @@
 
         <!-- Dark banner header -->
         <div class="results-banner" id="results-banner-default">
-          <h1>ACTUALITÉS &amp; CONSEILS POST-DIAGNOSTIC&nbsp;:<br>VOTRE PLAN D'ACTION ET RESSOURCES CIBLÉES</h1>
+          <h1>VOTRE DIAGNOSTIC EST PRÊT&nbsp;:<br>DÉCOUVREZ NOS LOGICIELS CERTIFIÉS RECOMMANDÉS</h1>
         </div>
 
         <!-- B2C-only banner: shown instead of the default banner when the client is 100% Particuliers -->
@@ -90,34 +81,42 @@
             Vos factures B2C ne sont pas soumises à l'obligation de facturation électronique classique (mais au e-reporting). Un logiciel de caisse ou de facturation simple certifié suffit.
           </p>
 
-          <!-- 3-column articles -->
+          <!-- Affiliate partner comparator — main focus of the results page -->
+          <p class="partners-intro" id="partners-intro">Voici les 3 logiciels certifiés les mieux adaptés à votre profil&nbsp;:</p>
+
           <div class="articles-grid" id="articles-grid">
 
-            <div class="article-card">
+            <div class="article-card partner-card">
+              <span class="partner-badge">Certifié PDP</span>
               <div class="article-header">
-                <img src="assets/images/law.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">Conformité 2026&nbsp;: Calendrier des dates clés.</h3>
+                <img src="assets/images/conforme-2026.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
+                <h3 class="article-title">Pennylane</h3>
               </div>
-              <p class="article-desc">Ne manquez aucune échéance obligatoire.</p>
-              <a href="blog-conformite-2026.html" class="article-link">Lire l'article →</a>
+              <p class="article-desc">Comptabilité et facturation électronique tout-en-un, pensée pour les TPE/PME.</p>
+              <!-- TODO: replace "#" with the real Pennylane affiliate link -->
+              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
             </div>
 
-            <div class="article-card">
+            <div class="article-card partner-card">
+              <span class="partner-badge">Certifié PDP</span>
               <div class="article-header">
                 <img src="assets/images/cloud-connect.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">PDP vs. ODF&nbsp;: Comprendre les types de plateformes.</h3>
+                <h3 class="article-title">Sage</h3>
               </div>
-              <p class="article-desc">Faites le bon choix technique pour votre TPE/PME.</p>
-              <a href="blog-pdp-vs-odf.html" class="article-link">Lire l'article →</a>
+              <p class="article-desc">Solution éprouvée pour la gestion comptable et la conformité 2026.</p>
+              <!-- TODO: replace "#" with the real Sage affiliate link -->
+              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
             </div>
 
-            <div class="article-card">
+            <div class="article-card partner-card">
+              <span class="partner-badge">Partenaire</span>
               <div class="article-header">
-                <img src="assets/images/gear.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">Automatisation Comptable&nbsp;: Gagnez en efficacité.</h3>
+                <img src="assets/images/rocket.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
+                <h3 class="article-title">QuickBooks</h3>
               </div>
-              <p class="article-desc">Réduisez vos coûts et erreurs de gestion.</p>
-              <a href="blog-automatisation-comptable.html" class="article-link">Lire l'article →</a>
+              <p class="article-desc">Facturation simple et automatisée, idéale pour démarrer rapidement.</p>
+              <!-- TODO: replace "#" with the real QuickBooks affiliate link -->
+              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
             </div>
 
           </div><!-- /.articles-grid -->

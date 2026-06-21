@@ -27,22 +27,17 @@
         <div class="ps-line" id="ps-line-1" aria-hidden="true"></div>
         <div class="ps-item" id="ps-2">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 2&nbsp;: Statut</span>
+          <span class="ps-label">Étape 2&nbsp;: Volume</span>
         </div>
         <div class="ps-line" id="ps-line-2" aria-hidden="true"></div>
         <div class="ps-item" id="ps-3">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 3&nbsp;: Volume</span>
+          <span class="ps-label">Étape 3&nbsp;: Connexion</span>
         </div>
         <div class="ps-line" id="ps-line-3" aria-hidden="true"></div>
         <div class="ps-item" id="ps-4">
           <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 4&nbsp;: Connexion</span>
-        </div>
-        <div class="ps-line" id="ps-line-4" aria-hidden="true"></div>
-        <div class="ps-item" id="ps-5">
-          <span class="ps-circle" aria-hidden="true"></span>
-          <span class="ps-label">Étape 5&nbsp;: Résultat</span>
+          <span class="ps-label">Étape 4&nbsp;: Résultat</span>
         </div>
       </div>
     </nav>
@@ -91,39 +86,32 @@
 
         </div>
 
-        <!-- ════ STEP 2 — STATUT ════ -->
-        <div class="quiz-step" id="step-2" data-step="2" aria-label="Étape 2 : Votre statut d'entreprise">
+        <!-- ════ STEP 2 — VOLUME ════ -->
+        <div class="quiz-step" id="step-2" data-step="2" aria-label="Étape 2 : Votre volume de facturation">
 
-          <p class="step-eyebrow">Étape 2 : Votre Statut d'Entreprise</p>
-          <h1 class="quiz-question">Quel est le statut juridique actuel de votre entreprise&nbsp;?</h1>
+          <p class="step-eyebrow">Étape 2 : Votre Volume de Facturation</p>
+          <h1 class="quiz-question">Volume de factures mensuelles estimé&nbsp;?</h1>
 
-          <div class="options-grid">
-            <button class="option-card" data-value="tpe_pme" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/tpme-pme.webp" alt="" aria-hidden="true" />
+          <div class="options-grid options-grid-3">
+            <button class="option-card" data-value="1_50" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/invoices.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">TPE / PME</span>
-                <span class="option-sub">( Société : SARL, SAS, etc. )</span>
+                <span class="option-title">1 – 50</span>
+                <span class="option-sub">factures / mois</span>
               </div>
             </button>
-            <button class="option-card" data-value="entrepreneur_individuel" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/entrepreneur-individuel.webp" alt="" aria-hidden="true" />
+            <button class="option-card" data-value="51_200" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/invoice-2.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">Entrepreneur Individuel</span>
-                <span class="option-sub">( EI, EIRL )</span>
+                <span class="option-title">51 – 200</span>
+                <span class="option-sub">factures / mois</span>
               </div>
             </button>
-            <button class="option-card" data-value="micro_entrepreneur" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/micro-entrepreneur.webp" alt="" aria-hidden="true" />
+            <button class="option-card" data-value="plus_200" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/graph.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">Micro-Entrepreneur</span>
-                <span class="option-sub">( Auto-Entrepreneur )</span>
-              </div>
-            </button>
-            <button class="option-card" data-value="association" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/association-collectivité.webp" alt="" aria-hidden="true" />
-              <div class="option-text">
-                <span class="option-title">Association, Collectivité</span>
-                <span class="option-sub">( ou Autre Statut )</span>
+                <span class="option-title">Plus de 200</span>
+                <span class="option-sub">factures / mois</span>
               </div>
             </button>
           </div>
@@ -131,7 +119,7 @@
           <p class="selection-error" id="error-2" role="alert">Veuillez sélectionner une option pour continuer.</p>
 
           <button class="btn-cta btn-next" id="next-2" type="button" data-target="3" disabled>
-            Confirmer mon statut et passer à l'étape suivante
+            Confirmer mon volume et passer à l'étape suivante
           </button>
 
           <div class="quiz-step-nav">
@@ -140,100 +128,53 @@
 
         </div>
 
-        <!-- ════ STEP 3 — VOLUME ════ -->
-        <div class="quiz-step" id="step-3" data-step="3" aria-label="Étape 3 : Votre volume d'activité">
+        <!-- ════ STEP 3 — CONNEXION / LOGICIEL ════ -->
+        <div class="quiz-step" id="step-3" data-step="3" aria-label="Étape 3 : Votre logiciel comptable">
 
-          <p class="step-eyebrow">Étape 3 : Votre Volume d'Activité</p>
-          <h1 class="quiz-question">Quel est votre chiffre d'affaires annuel approximatif&nbsp;?</h1>
+          <p class="step-eyebrow">Étape 3 : Votre Logiciel Comptable</p>
+          <h1 class="quiz-question">Quel est votre logiciel comptable actuel&nbsp;?</h1>
 
-          <div class="options-grid">
-            <button class="option-card" data-value="moins_15k" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/currency.webp" alt="" aria-hidden="true" />
+          <div class="options-grid options-grid-5">
+            <button class="option-card" data-value="sage" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/cloud-connect.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">&lt; 15k€ CA</span>
-                <span class="option-sub">Moins de 15 000€ / an</span>
+                <span class="option-title">Sage</span>
               </div>
             </button>
-            <button class="option-card" data-value="15k_50k" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/invoices.webp" alt="" aria-hidden="true" />
+            <button class="option-card" data-value="cegid" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/cloud.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">15k€ – 50k€ CA</span>
-                <span class="option-sub">15 000€ à 50 000€ / an</span>
+                <span class="option-title">Cegid</span>
               </div>
             </button>
-            <button class="option-card" data-value="50k_200k" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/invoice-2.webp" alt="" aria-hidden="true" />
+            <button class="option-card" data-value="quickbooks" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/rocket.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">50k€ – 200k€ CA</span>
-                <span class="option-sub">50 000€ à 200 000€ / an</span>
+                <span class="option-title">QuickBooks</span>
               </div>
             </button>
-            <button class="option-card" data-value="plus_200k" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/graph.webp" alt="" aria-hidden="true" />
+            <button class="option-card" data-value="pennylane" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/conforme-2026.webp" alt="" aria-hidden="true" />
               <div class="option-text">
-                <span class="option-title">&gt; 200k€ CA</span>
-                <span class="option-sub">Plus de 200 000€ / an</span>
+                <span class="option-title">Pennylane</span>
+              </div>
+            </button>
+            <button class="option-card" data-value="autre" type="button" aria-pressed="false">
+              <img class="option-icon" loading="lazy" src="assets/images/gear.webp" alt="" aria-hidden="true" />
+              <div class="option-text">
+                <span class="option-title">Autre</span>
               </div>
             </button>
           </div>
 
           <p class="selection-error" id="error-3" role="alert">Veuillez sélectionner une option pour continuer.</p>
 
-          <button class="btn-cta btn-next" id="next-3" type="button" data-target="4" disabled>
-            Confirmer mon volume et passer à l'étape suivante
-          </button>
-
-          <div class="quiz-step-nav">
-            <button class="btn-back" type="button" data-target="2">← Retour</button>
-          </div>
-
-        </div>
-
-        <!-- ════ STEP 4 — CONNEXION ════ -->
-        <div class="quiz-step" id="step-4" data-step="4" aria-label="Étape 4 : Votre connexion comptable">
-
-          <p class="step-eyebrow">Étape 4 : Connexion à votre outil comptable</p>
-          <h1 class="quiz-question">Comment gérez-vous votre comptabilité actuellement&nbsp;?</h1>
-
-          <div class="options-grid">
-            <button class="option-card" data-value="saas" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/cloud-connect.webp" alt="" aria-hidden="true" />
-              <div class="option-text">
-                <span class="option-title">Logiciel comptable en ligne</span>
-                <span class="option-sub">SaaS (Pennylane, Sage, etc.)</span>
-              </div>
-            </button>
-            <button class="option-card" data-value="expert_comptable" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/bussinessman.webp" alt="" aria-hidden="true" />
-              <div class="option-text">
-                <span class="option-title">Expert-comptable classique</span>
-                <span class="option-sub">Je travaille avec un cabinet</span>
-              </div>
-            </button>
-            <button class="option-card" data-value="excel" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/excel.webp" alt="" aria-hidden="true" />
-              <div class="option-text">
-                <span class="option-title">Excel / Google Sheets</span>
-                <span class="option-sub">Je gère ma comptabilité moi-même</span>
-              </div>
-            </button>
-            <button class="option-card" data-value="automatiser" type="button" aria-pressed="false">
-              <img class="option-icon" loading="lazy" src="assets/images/gear.webp" alt="" aria-hidden="true" />
-              <div class="option-text">
-                <span class="option-title">Je cherche à automatiser</span>
-                <span class="option-sub">Ma comptabilité n'est pas encore optimisée</span>
-              </div>
-            </button>
-          </div>
-
-          <p class="selection-error" id="error-4" role="alert">Veuillez sélectionner une option pour continuer.</p>
-
-          <button class="btn-cta btn-next" id="next-4" type="button" data-target="results" disabled>
+          <button class="btn-cta btn-next" id="next-3" type="button" data-target="results" disabled>
             Confirmer et voir mon résultat
           </button>
 
           <div class="quiz-step-nav">
-            <button class="btn-back" type="button" data-target="3">← Retour</button>
+            <button class="btn-back" type="button" data-target="2">← Retour</button>
           </div>
 
         </div>
