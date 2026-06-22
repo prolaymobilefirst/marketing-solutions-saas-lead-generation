@@ -3,9 +3,11 @@ RewriteEngine On
 
 # Lead funnel API — same public paths as the Netlify/Vercel functions, so
 # js/webhook.js needs no per-host branching. Must come before the generic
-# /page → /page.html rule below.
-RewriteRule ^api/submit-lead$ api/submit-lead.php [L]
-RewriteRule ^api/download-pdf$ api/download-pdf.php [L]
+# /page → /page.html rule below. The PHP twins live in api-php/, not
+# api/, because Vercel's build scans api/ and rejects a .js and .php file
+# sharing the same basename as a "conflicting path" — see api-php/.
+RewriteRule ^api/submit-lead$ api-php/submit-lead.php [L]
+RewriteRule ^api/download-pdf$ api-php/download-pdf.php [L]
 
 # The lead-magnet PDF and admin data must never be reachable as static
 # files — same defense-in-depth redirect already used on Netlify/Vercel.

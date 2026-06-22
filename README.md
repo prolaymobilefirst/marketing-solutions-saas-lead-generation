@@ -92,7 +92,12 @@ Open `http://localhost:8080` in your browser either way.
 │
 ├── api/
 │   ├── submit-lead.js   # POST /api/submit-lead  (Vercel)
-│   ├── download-pdf.js  # GET  /api/download-pdf (Vercel)
+│   └── download-pdf.js  # GET  /api/download-pdf (Vercel)
+│
+├── api-php/             # PHP twins of api/ — NOT named api/ on purpose: Vercel's
+│   │                    # build scans api/ and rejects a .js/.php pair sharing a
+│   │                    # basename as a "conflicting path". .htaccess rewrites
+│   │                    # /api/submit-lead and /api/download-pdf here on Apache.
 │   ├── submit-lead.php  # POST /api/submit-lead  (Hostinger/Apache+PHP)
 │   └── download-pdf.php # GET  /api/download-pdf (Hostinger/Apache+PHP)
 │
@@ -272,13 +277,13 @@ Node runtime**. To deploy there instead of Netlify/Vercel:
    copy `php/config.local.php.example` to `php/config.local.php`
    (gitignored) and fill in the constants there instead.
 3. Make sure `mod_rewrite` is enabled — `.htaccess` at the project root
-   already routes `/api/submit-lead` → `submit-lead.php` and
-   `/api/download-pdf` → `download-pdf.php` (Apache only; Netlify/Vercel
-   keep using their own Node functions, so nothing else changes if you
-   stay on those platforms).
+   already routes `/api/submit-lead` → `api-php/submit-lead.php` and
+   `/api/download-pdf` → `api-php/download-pdf.php` (Apache only; Netlify/Vercel
+   keep using their own Node functions in `api/`, so nothing else changes if
+   you stay on those platforms).
 4. Visit `/admin` to create the admin account (see above).
 
-Both the lead funnel (`api/*.php`) and the CMS (`admin/`) are PHP twins of
+Both the lead funnel (`api-php/*.php`) and the CMS (`admin/`) are PHP twins of
 the existing Node implementation, with the same request/response
 contracts — `js/webhook.js` doesn't need to know which backend it's
 talking to.
