@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Votre Résultat — Facturation 2026</title>
-  <meta name="description" content="Votre recommandation personnalisée pour la facturation électronique 2026, ressources et plan d'action gratuit." />
+  <title data-cms="seo.title">Votre Résultat — Facturation 2026</title>
+  <meta name="description" data-cms="seo.description" data-cms-kind="attr" data-cms-attr="content" content="Votre recommandation personnalisée pour la facturation électronique 2026, ressources et plan d'action gratuit." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" href="css/styles.min.css" as="style" />
@@ -65,24 +65,24 @@
 
         <!-- Dark banner header -->
         <div class="results-banner" id="results-banner-default">
-          <h1>VOTRE DIAGNOSTIC EST PRÊT&nbsp;:<br>DÉCOUVREZ NOS LOGICIELS CERTIFIÉS RECOMMANDÉS</h1>
+          <h1><span data-cms="results.bannerDefaultLine1" data-cms-label="Bannière standard — ligne 1">VOTRE DIAGNOSTIC EST PRÊT&nbsp;:</span><br><span data-cms="results.bannerDefaultLine2" data-cms-label="Bannière standard — ligne 2">DÉCOUVREZ NOS LOGICIELS CERTIFIÉS RECOMMANDÉS</span></h1>
         </div>
 
         <!-- B2C-only banner: shown instead of the default banner when the client is 100% Particuliers -->
         <div class="results-banner" id="results-banner-b2c" hidden>
-          <h1>VOS CLIENTS SONT DES PARTICULIERS&nbsp;:<br>PAS D'OBLIGATION DE FACTURATION ÉLECTRONIQUE CLASSIQUE</h1>
+          <h1><span data-cms="results.bannerB2cLine1" data-cms-label="Bannière B2C — ligne 1">VOS CLIENTS SONT DES PARTICULIERS&nbsp;:</span><br><span data-cms="results.bannerB2cLine2" data-cms-label="Bannière B2C — ligne 2">PAS D'OBLIGATION DE FACTURATION ÉLECTRONIQUE CLASSIQUE</span></h1>
         </div>
 
         <!-- Padded body -->
         <div class="results-body">
 
           <!-- B2C-only message: replaces the article grid for 100% Particuliers clients -->
-          <p class="b2c-message" id="b2c-message" hidden>
+          <p class="b2c-message" id="b2c-message" hidden data-cms="results.b2cMessage" data-cms-label="Message B2C">
             Vos factures B2C ne sont pas soumises à l'obligation de facturation électronique classique (mais au e-reporting). Un logiciel de caisse ou de facturation simple certifié suffit.
           </p>
 
           <!-- Affiliate partner comparator — main focus of the results page -->
-          <p class="partners-intro" id="partners-intro">Voici les 3 logiciels certifiés les mieux adaptés à votre profil&nbsp;:</p>
+          <p class="partners-intro" id="partners-intro" data-cms="results.partnersIntro" data-cms-label="Intro logiciels recommandés">Voici les 3 logiciels certifiés les mieux adaptés à votre profil&nbsp;:</p>
 
           <!-- Populated by buildRecommendations() in js/webhook.js: the Step 3
                software (if recognised) always leads with an upgrade pitch,
@@ -94,8 +94,8 @@
             <form class="results-cta-form" id="lead-form" novalidate>
 
               <div class="results-cta-left">
-                <p class="results-cta-eyebrow">PROCHAINE ÉTAPE RECOMMANDÉE</p>
-                <p class="results-cta-desc">TÉLÉCHARGEZ VOTRE PLAN D'ACTION DÉTAILLÉ<br>(PDF GRATUIT)</p>
+                <p class="results-cta-eyebrow" data-cms="results.ctaEyebrow" data-cms-label="CTA — accroche">PROCHAINE ÉTAPE RECOMMANDÉE</p>
+                <p class="results-cta-desc"><span data-cms="results.ctaDescLine1" data-cms-label="CTA — ligne 1">TÉLÉCHARGEZ VOTRE PLAN D'ACTION DÉTAILLÉ</span><br><span data-cms="results.ctaDescLine2" data-cms-label="CTA — ligne 2">(PDF GRATUIT)</span></p>
 
                 <div class="lead-form-fields">
                   <div class="lead-form-row">
@@ -130,20 +130,20 @@
               <div class="results-cta-right">
 
                 <!-- Success state (hidden until form is submitted) -->
-                <div class="form-success" id="form-success" role="status" aria-live="polite">
+                <div class="form-success" id="form-success" role="status" aria-live="polite" data-cms="results.formSuccess" data-cms-label="Message de succès">
                   ✓ Merci&nbsp;! Votre plan d'action vous a été envoyé par e-mail.
                 </div>
 
                 <div class="lead-form-action" id="lead-form-action">
-                  <button class="btn-submit results-cta-btn" type="submit" id="submit-btn">
+                  <button class="btn-submit results-cta-btn" type="submit" id="submit-btn" data-cms="results.submitBtn" data-cms-label="Texte du bouton d'envoi">
                     Obtenir mon plan d'action (PDF)
                   </button>
 
                   <div class="audit-trust">
-                    <img src="assets/images/graph.webp" alt="" class="audit-trust-icon" aria-hidden="true" loading="lazy" />
+                    <img src="assets/images/graph.webp" alt="" class="audit-trust-icon" aria-hidden="true" loading="lazy" data-cms="results.auditTrustIcon" data-cms-kind="attr" data-cms-attr="src" />
                     <div class="audit-trust-text">
-                      <strong>Audit confidentiel.</strong>
-                      <span>Plus de 50 experts analysés.</span>
+                      <strong data-cms="results.auditTrustTitle">Audit confidentiel.</strong>
+                      <span data-cms="results.auditTrustSub">Plus de 50 experts analysés.</span>
                     </div>
                   </div>
                 </div>

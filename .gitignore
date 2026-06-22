@@ -16,6 +16,11 @@ deploy.sh
 .env
 .env.local
 .env.*.local
+php/config.local.php
+
+# Admin CMS local data — credentials, lockout state (never commit real admin data)
+admin/data/admin-users.json
+admin/data/login-attempts.json
 
 # Netlify/Vercel CLI local project-link cache (created by `netlify dev`/`vercel dev`)
 .netlify

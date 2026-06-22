@@ -1,0 +1,38 @@
+{
+  "autre": {
+    "name": "Votre logiciel actuel",
+    "icon": "assets/images/autre.webp",
+    "badge": "Non certifié PDP",
+    "desc": "Votre logiciel actuel n'est pas certifié PDP pour la réforme 2026. Découvrez ci-dessous nos solutions certifiées pour rester conforme sans rupture de service.",
+    "href": "#",
+    "ctaText": "Comparer les solutions →"
+  },
+  "pennylane": {
+    "name": "Pennylane",
+    "icon": "assets/images/pennylane.webp",
+    "badge": "Certifié PDP",
+    "desc": "Comptabilité et facturation électronique tout-en-un, pensée pour les TPE/PME.",
+    "href": "#"
+  },
+  "sage": {
+    "name": "Sage",
+    "icon": "assets/images/sage.webp",
+    "badge": "Certifié PDP",
+    "desc": "Solution éprouvée pour la gestion comptable et la conformité 2026.",
+    "href": "#"
+  },
+  "quickbooks": {
+    "name": "QuickBooks",
+    "icon": "assets/images/quickbooks.webp",
+    "badge": "Partenaire",
+    "desc": "Facturation simple et automatisée, idéale pour démarrer rapidement.",
+    "href": "#"
+  },
+  "cegid": {
+    "name": "Cegid",
+    "icon": "assets/images/cegid.webp",
+    "badge": "Certifié PDP",
+    "desc": "Plateforme complète de comptabilité et facturation, des PME aux grands groupes.",
+    "href": "#"
+  }
+}

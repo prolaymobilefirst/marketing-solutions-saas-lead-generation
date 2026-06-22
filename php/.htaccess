@@ -1,0 +1,7 @@
+# Shared PHP libs (incl. config.local.php secrets) — never requested
+# directly, only included by api/*.php and the admin panel.
+Require all denied
+<IfModule !mod_authz_core.c>
+  Order deny,allow
+  Deny from all
+</IfModule>

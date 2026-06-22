@@ -91,8 +91,28 @@ Open `http://localhost:8080` in your browser either way.
 │   └── download-pdf.js # GET  /api/download-pdf (Netlify)
 │
 ├── api/
-│   ├── submit-lead.js  # POST /api/submit-lead  (Vercel)
-│   └── download-pdf.js # GET  /api/download-pdf (Vercel)
+│   ├── submit-lead.js   # POST /api/submit-lead  (Vercel)
+│   ├── download-pdf.js  # GET  /api/download-pdf (Vercel)
+│   ├── submit-lead.php  # POST /api/submit-lead  (Hostinger/Apache+PHP)
+│   └── download-pdf.php # GET  /api/download-pdf (Hostinger/Apache+PHP)
+│
+├── php/                # Shared PHP libs for the lead funnel (PHP twin of lib/*.js)
+│   ├── config.php        # env var (or config.local.php) reader
+│   ├── pdf-token.php      # HMAC sign/verify, same scheme as lib/pdf-token.js
+│   └── submit-lead.php   # payload validation + Make.com proxy (cURL)
+│
+├── admin/               # Flat-file CMS admin panel (PHP — see "Admin Panel" below)
+│   ├── index.php          # login / first-run bootstrap
+│   ├── dashboard.php      # shell + sidebar
+│   ├── sections/          # one file per admin section (pages, seo, media, pdf, affiliates, blog)
+│   └── includes/          # auth, CSRF, flat-file I/O, the [data-cms] patch engine
+│
+├── content/             # Flat-file data store the admin panel reads/writes
+│   ├── affiliate-links.json  # public — fetched by js/webhook.js on results.html
+│   └── blog/*.json           # admin-only — source of truth for each blog post
+│
+├── templates/
+│   └── blog-post.template.html  # skeleton used to generate new blog-<slug>.html files
 │
 ├── docs/               # Project documentation
 │   ├── milestone.md    # Live status tracker
@@ -195,6 +215,73 @@ if intercepted. It is never exposed anywhere except in the one
 `submit-lead` response immediately consumed by the browser. If you need
 true single-use guarantees, swap in a small KV store (Netlify Blobs /
 Vercel KV) to mark tokens as spent.
+
+---
+
+## Admin Panel (Flat-File CMS)
+
+A PHP admin panel at `/admin` lets a non-technical editor manage page copy,
+images, SEO/schema, the gated lead-magnet PDF, the affiliate software
+catalog, and blog posts — all without a database. **It only runs on a
+PHP-capable host (Apache/Hostinger, or `php -S` locally) — Vercel and
+Netlify don't execute PHP**, so the admin panel is a no-op while the site
+is deployed there. See [Hostinger Deployment](#hostinger--php-deployment)
+below.
+
+**First run:** visit `/admin` — if no admin account exists yet, you'll be
+prompted to create the one (and only) admin account, no CLI/SSH needed.
+Credentials are stored as a bcrypt hash in `admin/data/admin-users.json`
+(gitignored — never commit real credentials).
+
+**Architecture — the HTML files themselves are the flat-file store.**
+Editable regions on `index.html`, `quiz.html`, `results.html`, `blog.html`,
+and the blog post template are marked with `data-cms="<key>"` attributes.
+The admin's patch engine (`admin/includes/htmlpatch.php`) scans a page for
+these attributes to build its edit form, and on save, surgically rewrites
+only the targeted byte range — the rest of the file is untouched, so a
+save never reformats or reflows markup you didn't ask to change.
+
+| Section | What it manages |
+|---|---|
+| Pages | Text/images on `index.html`, `quiz.html`, `results.html`, `blog.html` (`[data-cms]` regions) |
+| SEO | `<title>`, meta description, canonical, OG tags, and raw JSON-LD per page |
+| Médiathèque | Upload/list/delete `assets/images/*` — real MIME-sniffed, extension-whitelisted, randomly renamed |
+| PDF | Replace the gated lead-magnet PDF (`server/assets/sample.pdf`) |
+| Liens affiliés | CRUD over `content/affiliate-links.json` — the software catalog rendered on the results page |
+| Blog | Create/edit/delete posts (`content/blog/<slug>.json`) — saving regenerates `blog-<slug>.html` from `templates/blog-post.template.html` and refreshes `blog.html`'s article grid + `ld+json` `blogPost` list |
+
+**Security notes:** every admin form is CSRF-protected; login attempts are
+file-based rate-limited (5 attempts → 5 min lockout); `admin/data/`,
+`php/`, and `content/blog/*.json` are blocked from direct web access via
+`.htaccess`; uploads are validated by real file content (`finfo`), not by
+filename or the client's claimed `Content-Type`, and `assets/images/`
+disables PHP execution as defense in depth.
+
+---
+
+## Hostinger / PHP Deployment
+
+The static pages and the admin panel are designed to run on classic
+Apache + PHP shared hosting (e.g. Hostinger) with **no database and no
+Node runtime**. To deploy there instead of Netlify/Vercel:
+
+1. Upload the whole repository to your hosting's public web root via
+   Hostinger's File Manager, Git deploy, or FTP.
+2. Set `PDF_TOKEN_SECRET` (and optionally `MAKE_WEBHOOK_URL`). If your
+   plan doesn't expose a real environment-variable panel for plain PHP,
+   copy `php/config.local.php.example` to `php/config.local.php`
+   (gitignored) and fill in the constants there instead.
+3. Make sure `mod_rewrite` is enabled — `.htaccess` at the project root
+   already routes `/api/submit-lead` → `submit-lead.php` and
+   `/api/download-pdf` → `download-pdf.php` (Apache only; Netlify/Vercel
+   keep using their own Node functions, so nothing else changes if you
+   stay on those platforms).
+4. Visit `/admin` to create the admin account (see above).
+
+Both the lead funnel (`api/*.php`) and the CMS (`admin/`) are PHP twins of
+the existing Node implementation, with the same request/response
+contracts — `js/webhook.js` doesn't need to know which backend it's
+talking to.
 
 ---
 

@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Redirect /admin/page.php → /admin/page (301 permanent), mirroring the
+# clean-URL pattern already used for the public .html pages at the project
+# root, but for the admin panel's .php files.
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Internally serve /admin/page → /admin/page.php (no redirect loop)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]

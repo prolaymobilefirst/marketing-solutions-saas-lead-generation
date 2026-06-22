@@ -1,0 +1,13 @@
+# Defense in depth: this directory only ever holds admin-uploaded images,
+# but uploads are the classic webshell vector, so PHP execution is disabled
+# here regardless of what validate_uploaded_file() already enforces.
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|phtml|php\d|phar)$">
+  Require all denied
+  <IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+  </IfModule>
+</FilesMatch>

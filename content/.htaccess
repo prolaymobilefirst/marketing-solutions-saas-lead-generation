@@ -1,0 +1,17 @@
+# Default: deny direct access to everything under /content (blog post JSON
+# is admin-only — only the PHP admin reads it off disk).
+Require all denied
+<IfModule !mod_authz_core.c>
+  Order deny,allow
+  Deny from all
+</IfModule>
+
+# Exception: affiliate-links.json is fetched client-side by js/webhook.js
+# on results.html, so it must stay publicly readable.
+<Files "affiliate-links.json">
+  Require all granted
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+</Files>

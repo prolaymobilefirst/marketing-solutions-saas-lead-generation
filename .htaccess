@@ -1,6 +1,17 @@
 Options -MultiViews
 RewriteEngine On
 
+# Lead funnel API — same public paths as the Netlify/Vercel functions, so
+# js/webhook.js needs no per-host branching. Must come before the generic
+# /page → /page.html rule below.
+RewriteRule ^api/submit-lead$ api/submit-lead.php [L]
+RewriteRule ^api/download-pdf$ api/download-pdf.php [L]
+
+# The lead-magnet PDF and admin data must never be reachable as static
+# files — same defense-in-depth redirect already used on Netlify/Vercel.
+RewriteRule ^server/ /? [R=302,L]
+RewriteRule ^downloads/ /? [R=302,L]
+
 # Redirect /page.html → /page (301 permanent)
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
 RewriteRule ^ /%1 [R=301,L]
