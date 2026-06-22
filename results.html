@@ -84,42 +84,10 @@
           <!-- Affiliate partner comparator — main focus of the results page -->
           <p class="partners-intro" id="partners-intro">Voici les 3 logiciels certifiés les mieux adaptés à votre profil&nbsp;:</p>
 
-          <div class="articles-grid" id="articles-grid">
-
-            <div class="article-card partner-card" data-software="pennylane">
-              <span class="partner-badge">Certifié PDP</span>
-              <div class="article-header">
-                <img src="assets/images/pennylane.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">Pennylane</h3>
-              </div>
-              <p class="article-desc">Comptabilité et facturation électronique tout-en-un, pensée pour les TPE/PME.</p>
-              <!-- TODO: replace "#" with the real Pennylane affiliate link -->
-              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
-            </div>
-
-            <div class="article-card partner-card" data-software="sage">
-              <span class="partner-badge">Certifié PDP</span>
-              <div class="article-header">
-                <img src="assets/images/sage.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">Sage</h3>
-              </div>
-              <p class="article-desc">Solution éprouvée pour la gestion comptable et la conformité 2026.</p>
-              <!-- TODO: replace "#" with the real Sage affiliate link -->
-              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
-            </div>
-
-            <div class="article-card partner-card" data-software="quickbooks">
-              <span class="partner-badge">Partenaire</span>
-              <div class="article-header">
-                <img src="assets/images/quickbooks.webp" alt="" class="article-icon" aria-hidden="true" loading="lazy" />
-                <h3 class="article-title">QuickBooks</h3>
-              </div>
-              <p class="article-desc">Facturation simple et automatisée, idéale pour démarrer rapidement.</p>
-              <!-- TODO: replace "#" with the real QuickBooks affiliate link -->
-              <a href="#" class="btn-cta partner-discover-btn" target="_blank" rel="noopener sponsored">Découvrir →</a>
-            </div>
-
-          </div><!-- /.articles-grid -->
+          <!-- Populated by buildRecommendations() in js/webhook.js: the Step 3
+               software (if recognised) always leads with an upgrade pitch,
+               the other 2 cards are a random pick from the remaining catalog. -->
+          <div class="articles-grid" id="articles-grid"></div>
 
           <!-- CTA row: left text + fields, right button + trust line -->
           <div class="results-cta">
