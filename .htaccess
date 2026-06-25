@@ -24,6 +24,11 @@ RewriteRule ^api/download-pdf$ api-php/download-pdf.php [L]
 RewriteRule ^server/ /? [R=302,L]
 RewriteRule ^downloads/ /? [R=302,L]
 
+# Redirect /index.html → / (301 permanent) — must precede the generic
+# page.html rule below, which would otherwise send this to /index.
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^ /? [R=301,L]
+
 # Redirect /page.html → /page (301 permanent)
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
 RewriteRule ^ /%1 [R=301,L]

@@ -54,6 +54,16 @@ function admin_verify_credentials(string $username, string $password): bool
     return password_verify($password, $user['passwordHash']);
 }
 
+function admin_update_password(string $newPassword): void
+{
+    $user = flatfile_read_json(ADMIN_USERS_FILE);
+    if (!$user) {
+        throw new RuntimeException('Aucun compte admin trouvé.');
+    }
+    $user['passwordHash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+    flatfile_write_json(ADMIN_USERS_FILE, $user);
+}
+
 /* ── Login rate limiting (file-based, no DB) ───────────────────────────── */
 
 function login_attempts_state(): array
