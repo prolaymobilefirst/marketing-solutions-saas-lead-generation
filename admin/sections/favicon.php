@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new UploadError('Choisissez un fichier à téléverser.');
             }
             $validated = validate_uploaded_file($_FILES['logo'], UPLOAD_IMAGE_MIME_EXT, LOGO_MAX_BYTES);
+            $validated = convert_image_to_webp($validated);
 
             // Same fixed-filename-overwrite pattern as the favicon, so the
             // header partial's <img src> never needs to change shape, only
@@ -118,7 +119,7 @@ $currentLogo = $logoField?->value ?? '';
     <div class="admin-field">
       <label>Téléverser un nouveau logo</label>
       <input type="file" name="logo" accept=".webp,.png,.jpg,.jpeg,.svg" required />
-      <span class="hint">WebP, PNG, JPG ou SVG — 2 Mo maximum. Le type réel du fichier est vérifié côté serveur.</span>
+      <span class="hint">WebP, PNG, JPG ou SVG — 2 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé (taille réduite, qualité visuelle conservée) ; le type réel du fichier est vérifié côté serveur.</span>
     </div>
     <button class="admin-btn" type="submit">Téléverser et appliquer</button>
   </form>

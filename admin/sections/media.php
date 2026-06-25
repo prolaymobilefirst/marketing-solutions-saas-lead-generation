@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new UploadError('Choisissez un fichier à téléverser.');
             }
             $validated = validate_uploaded_file($_FILES['image'], UPLOAD_IMAGE_MIME_EXT, MEDIA_MAX_BYTES);
+            $validated = convert_image_to_webp($validated);
             $hint = pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
             $filename = safe_upload_filename($validated['ext'], $hint);
             move_validated_upload($validated, MEDIA_DIR . '/' . $filename);
@@ -63,7 +64,7 @@ sort($files);
     <input type="hidden" name="action" value="upload" />
     <div class="admin-field">
       <input type="file" name="image" accept=".webp,.png,.jpg,.jpeg,.svg" required />
-      <span class="hint">WebP, PNG, JPG ou SVG — 4 Mo maximum. Le type réel du fichier est vérifié côté serveur.</span>
+      <span class="hint">WebP, PNG, JPG ou SVG — 4 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé (taille réduite, qualité visuelle conservée) ; le type réel du fichier est vérifié côté serveur.</span>
     </div>
     <button class="admin-btn" type="submit">Téléverser</button>
   </form>
