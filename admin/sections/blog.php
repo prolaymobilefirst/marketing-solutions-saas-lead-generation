@@ -123,8 +123,8 @@ $isNew = $_GET['new'] ?? false;
       </div>
       <div class="admin-field">
         <label>Corps de l'article (HTML)</label>
-        <textarea name="bodyHtml" style="min-height:320px;font-family:monospace;"><?= htmlspecialchars($editing['bodyHtml'] ?? '', ENT_QUOTES) ?></textarea>
-        <span class="hint">HTML brut (h3, p, ul/li, strong…) — ce contenu est inséré tel quel, sans échappement.</span>
+        <textarea name="bodyHtml" data-richtext style="min-height:320px;font-family:monospace;"><?= htmlspecialchars($editing['bodyHtml'] ?? '', ENT_QUOTES) ?></textarea>
+        <span class="hint">Éditeur visuel (h2/h3, paragraphes, listes, citations, liens, gras/italique) — basculez en « Code source » pour du HTML brut. Ce contenu est inséré tel quel, sans échappement.</span>
       </div>
 
       <button class="admin-btn" type="submit">Publier</button>

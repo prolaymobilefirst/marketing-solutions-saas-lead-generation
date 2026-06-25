@@ -105,3 +105,35 @@ body {
   background: #fff; border: 1px solid var(--border); color: var(--navy);
 }
 .admin-tabs a.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+/* ── Rich text editor (blog body) ── */
+.richtext-field { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.richtext-toolbar {
+  display: flex; flex-wrap: wrap; gap: .25rem; padding: .4rem; background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.richtext-toolbar button {
+  padding: .3rem .55rem; border: 1px solid var(--border); border-radius: 6px; background: #fff;
+  color: var(--text); font-size: .8rem; cursor: pointer; line-height: 1.2;
+}
+.richtext-toolbar button:hover { background: #eef3f3; }
+.richtext-toolbar button.is-active { background: var(--teal); color: #fff; border-color: var(--teal); }
+.richtext-toolbar .richtext-sep { width: 1px; background: var(--border); margin: 0 .15rem; }
+.richtext-toolbar.source-active button:not([data-action="toggleSource"]) { opacity: .4; pointer-events: none; }
+
+.richtext-editable {
+  min-height: 320px; padding: .75rem .9rem; font-size: .9rem; line-height: 1.5; outline: none;
+}
+.richtext-editable[hidden] { display: none; }
+.richtext-editable h2, .richtext-editable h3 { color: var(--navy); margin: .6em 0 .3em; }
+.richtext-editable p { margin: 0 0 .75em; }
+.richtext-editable ul, .richtext-editable ol { margin: 0 0 .75em; padding-left: 1.4em; }
+.richtext-editable blockquote {
+  margin: 0 0 .75em; padding: .25rem 0 .25rem .9rem; border-left: 3px solid var(--accent); color: #45525c;
+}
+.richtext-editable a { color: var(--cta); }
+
+.richtext-field textarea {
+  width: 100%; border: none; border-radius: 0; margin: 0; display: block;
+}
+.richtext-field textarea[hidden] { display: none; }
