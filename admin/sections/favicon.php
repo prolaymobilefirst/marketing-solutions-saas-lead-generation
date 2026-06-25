@@ -97,7 +97,7 @@ $currentLogo = $logoField?->value ?? '';
     <input type="hidden" name="action" value="favicon" />
     <div class="admin-field">
       <label>Téléverser un nouveau favicon</label>
-      <input type="file" name="favicon" accept=".ico,.png,.svg" />
+      <input type="file" name="favicon" accept=".ico,.png,.svg" required />
       <span class="hint">ICO, PNG ou SVG — 1 Mo maximum. Le type réel du fichier est vérifié côté serveur.</span>
     </div>
     <button class="admin-btn" type="submit">Téléverser et appliquer</button>
@@ -118,7 +118,7 @@ $currentLogo = $logoField?->value ?? '';
     <input type="hidden" name="action" value="logo" />
     <div class="admin-field">
       <label>Téléverser un nouveau logo</label>
-      <input type="file" name="logo" accept=".webp,.png,.jpg,.jpeg,.svg" />
+      <input type="file" name="logo" accept=".webp,.png,.jpg,.jpeg,.svg" required />
       <span class="hint">WebP, PNG, JPG ou SVG — 2 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé (taille réduite, qualité visuelle conservée) ; le type réel du fichier est vérifié côté serveur.</span>
     </div>
     <button class="admin-btn" type="submit">Téléverser et appliquer</button>
