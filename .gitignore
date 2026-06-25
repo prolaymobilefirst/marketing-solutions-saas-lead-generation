@@ -1,6 +1,7 @@
 .vscode
 CLAUDE.md
 results-backup.html
+requirement.md
 /docs
 /designs
 /compressed
@@ -25,6 +26,7 @@ admin/data/login-attempts.json
 # Netlify/Vercel CLI local project-link cache (created by `netlify dev`/`vercel dev`)
 .netlify
 .vercel
+.remember
 
 # Node (no dependencies are checked in, but ignore in case any get installed locally)
 node_modules

@@ -249,11 +249,23 @@ save never reformats or reflows markup you didn't ask to change.
 | Section | What it manages |
 |---|---|
 | Pages | Text/images on `index.html`, `quiz.html`, `results.html`, `blog.html` (`[data-cms]` regions) |
-| SEO | `<title>`, meta description, canonical, OG tags, and raw JSON-LD per page |
+| SEO | `<title>`, meta description, meta keywords, canonical, OG tags, and raw JSON-LD per page, plus a **Global** tab for the Google Tag Manager container ID and Google/Bing site-verification codes |
 | Médiathèque | Upload/list/delete `assets/images/*` — real MIME-sniffed, extension-whitelisted, randomly renamed |
+| Favicon & Logo | Upload/replace the site favicon (ICO/PNG/SVG, synced to every page) and the header logo (WebP/PNG/JPG/SVG, patched directly into `partials/header.html` since it's a single shared partial) |
 | PDF | Replace the gated lead-magnet PDF (`server/assets/sample.pdf`) |
 | Liens affiliés | CRUD over `content/affiliate-links.json` — the software catalog rendered on the results page |
 | Blog | Create/edit/delete posts (`content/blog/<slug>.json`) — saving regenerates `blog-<slug>.html` from `templates/blog-post.template.html` and refreshes `blog.html`'s article grid + `ld+json` `blogPost` list |
+
+**Site-wide settings (GTM, search-engine verification, favicon)** are a
+different mechanism from the per-page `[data-cms]` editor, since the same
+value needs to land on every page at once: `content/site-settings.json` is
+the source of truth, and saving it (`admin/includes/site_settings.php`)
+rewrites the `<!-- GTM_HEAD_START -->…<!-- GTM_HEAD_END -->`,
+`<!-- SITE_META_START -->…<!-- SITE_META_END -->`, and
+`<!-- GTM_BODY_START -->…<!-- GTM_BODY_END -->` comment-marker blocks
+already present in every page's `<head>`/`<body>` — including
+`templates/blog-post.template.html`, so new blog posts pick up the current
+settings automatically the moment they're published.
 
 **Security notes:** every admin form is CSRF-protected; login attempts are
 file-based rate-limited (5 attempts → 5 min lockout); `admin/data/`,
@@ -268,7 +280,10 @@ disables PHP execution as defense in depth.
 
 The static pages and the admin panel are designed to run on classic
 Apache + PHP shared hosting (e.g. Hostinger) with **no database and no
-Node runtime**. To deploy there instead of Netlify/Vercel:
+Node runtime**. Requires **PHP 8.3 or later** (the codebase avoids all
+patterns deprecated up to and including 8.3 — no `${}` string
+interpolation, no dynamic property assignment, no nullable-to-non-nullable
+implicit coercions). To deploy there instead of Netlify/Vercel:
 
 1. Upload the whole repository to your hosting's public web root via
    Hostinger's File Manager, Git deploy, or FTP.
@@ -276,11 +291,16 @@ Node runtime**. To deploy there instead of Netlify/Vercel:
    plan doesn't expose a real environment-variable panel for plain PHP,
    copy `php/config.local.php.example` to `php/config.local.php`
    (gitignored) and fill in the constants there instead.
-3. Make sure `mod_rewrite` is enabled — `.htaccess` at the project root
-   already routes `/api/submit-lead` → `api-php/submit-lead.php` and
-   `/api/download-pdf` → `api-php/download-pdf.php` (Apache only; Netlify/Vercel
-   keep using their own Node functions in `api/`, so nothing else changes if
-   you stay on those platforms).
+3. Make sure `mod_rewrite` and `mod_headers` are enabled — `.htaccess` at
+   the project root already routes `/api/submit-lead` →
+   `api-php/submit-lead.php` and `/api/download-pdf` →
+   `api-php/download-pdf.php` (Apache only; Netlify/Vercel keep using their
+   own Node functions in `api/`, so nothing else changes if you stay on
+   those platforms), and sets the same Cache-Control policy as the
+   `_headers` (Netlify) / `vercel.json` (Vercel) configs: 1-year immutable
+   for `css/`, `js/`, `assets/`, a 5-minute cache for `partials/`,
+   must-revalidate for HTML pages, and `no-store` for `/admin/`, `/api/`,
+   and `/api-php/`.
 4. Visit `/admin` to create the admin account (see above).
 
 Both the lead funnel (`api-php/*.php`) and the CMS (`admin/`) are PHP twins of

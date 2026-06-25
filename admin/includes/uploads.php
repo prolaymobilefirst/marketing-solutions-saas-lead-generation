@@ -17,6 +17,13 @@ const UPLOAD_PDF_MIME_EXT = [
     'application/pdf' => 'pdf',
 ];
 
+const UPLOAD_FAVICON_MIME_EXT = [
+    'image/x-icon' => 'ico',
+    'image/vnd.microsoft.icon' => 'ico',
+    'image/png' => 'png',
+    'image/svg+xml' => 'svg',
+];
+
 class UploadError extends RuntimeException {}
 
 /**

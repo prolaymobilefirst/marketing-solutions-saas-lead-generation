@@ -1,6 +1,16 @@
 Options -MultiViews
 RewriteEngine On
 
+# Cache-Control tagging — env vars consumed by the mod_headers block at the
+# bottom of this file. Mirrors the Netlify (_headers) / Vercel (vercel.json)
+# cache policy so Apache/Hostinger gets the same behaviour. Must run before
+# any [L]-flagged rule below: env vars are request-scoped and survive later
+# internal rewrites, but a rule never reached can't set one.
+RewriteRule ^$ - [E=CACHE_HTML:1]
+RewriteRule ^(css|js|assets)/ - [E=CACHE_IMMUTABLE:1]
+RewriteRule ^partials/ - [E=CACHE_SHORT:1]
+RewriteRule ^(admin|api-php|api)/ - [E=CACHE_NONE:1]
+
 # Lead funnel API — same public paths as the Netlify/Vercel functions, so
 # js/webhook.js needs no per-host branching. Must come before the generic
 # /page → /page.html rule below. The PHP twins live in api-php/, not
@@ -22,4 +32,15 @@ RewriteRule ^ /%1 [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^(.+?)/?$ $1.html [L]
+RewriteRule ^(.+?)/?$ $1.html [E=CACHE_HTML:1,L]
+
+# Cache-Control headers — mirrors the Netlify (_headers) / Vercel (vercel.json)
+# cache policy: 1-year immutable for versioned assets, short cache for
+# partials (so site-wide CMS edits propagate quickly), must-revalidate for
+# HTML pages, and no-store for dynamic/admin endpoints.
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable" env=CACHE_IMMUTABLE
+  Header set Cache-Control "public, max-age=300" env=CACHE_SHORT
+  Header set Cache-Control "public, max-age=0, must-revalidate" env=CACHE_HTML
+  Header set Cache-Control "no-store" env=CACHE_NONE
+</IfModule>

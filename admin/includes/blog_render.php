@@ -25,6 +25,16 @@ function blog_save_post(array $post): void
     flatfile_write_json(BLOG_CONTENT_DIR . '/' . $post['slug'] . '.json', $post);
     blog_write_post_html($post);
     blog_regenerate_index();
+
+    // A newly generated post starts from the template as-is — it needs the
+    // current GTM/site-verification/favicon settings synced in immediately,
+    // same as every other page, rather than waiting for the next time
+    // someone happens to resave the global settings.
+    $siteSettingsPath = __DIR__ . '/site_settings.php';
+    if (is_file($siteSettingsPath)) {
+        require_once $siteSettingsPath;
+        site_settings_sync_all_pages();
+    }
 }
 
 function blog_delete_post(string $slug): void
@@ -80,6 +90,7 @@ function blog_write_post_html(array $post): void
     $replacements = [
         '__TITLE__' => cms_escape_text($post['title']),
         '__DESCRIPTION__' => htmlspecialchars($post['metaDescription'], ENT_COMPAT),
+        '__KEYWORDS__' => htmlspecialchars($post['keywords'] ?? '', ENT_COMPAT),
         '__CANONICAL__' => htmlspecialchars($canonical, ENT_COMPAT),
         '__SCHEMA__' => "\n  " . blog_build_article_schema($post) . "\n  ",
         '__SLUG__' => htmlspecialchars($post['slug'], ENT_QUOTES),

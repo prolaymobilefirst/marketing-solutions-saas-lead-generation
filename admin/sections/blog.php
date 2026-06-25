@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'excerpt' => trim((string) ($_POST['excerpt'] ?? '')),
                 'intro' => trim((string) ($_POST['intro'] ?? '')),
                 'metaDescription' => trim((string) ($_POST['metaDescription'] ?? '')),
+                'keywords' => trim((string) ($_POST['keywords'] ?? '')),
                 'datePublished' => $datePublished,
                 'dateModified' => date('Y-m-d'),
                 'readTime' => trim((string) ($_POST['readTime'] ?? '')) ?: '5 min de lecture',
@@ -103,6 +104,10 @@ $isNew = $_GET['new'] ?? false;
       <div class="admin-field">
         <label>Meta description (SEO)</label>
         <textarea name="metaDescription"><?= htmlspecialchars($editing['metaDescription'] ?? '', ENT_QUOTES) ?></textarea>
+      </div>
+      <div class="admin-field">
+        <label>Mots-clés (SEO, optionnel)</label>
+        <input type="text" name="keywords" value="<?= htmlspecialchars($editing['keywords'] ?? '', ENT_QUOTES) ?>" placeholder="facturation électronique, PDP, conformité 2026" />
       </div>
       <div class="admin-field">
         <label>Date de publication</label>
