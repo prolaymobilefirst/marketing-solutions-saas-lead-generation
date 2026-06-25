@@ -92,7 +92,7 @@ $currentLogo = $logoField?->value ?? '';
     <p>Aucun favicon n'est actuellement configuré.</p>
   <?php endif; ?>
   <p class="hint">Synchronisé automatiquement sur toutes les pages (accueil, quiz, résultat, blog et chaque article) à chaque mise à jour.</p>
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" action="dashboard?section=favicon" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="favicon" />
     <div class="admin-field">
@@ -113,7 +113,7 @@ $currentLogo = $logoField?->value ?? '';
     <p>Logo introuvable dans partials/header.html.</p>
   <?php endif; ?>
   <p class="hint">Logo affiché dans l'en-tête (<code>partials/header.html</code>), partagé par toutes les pages — une seule mise à jour suffit.</p>
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" action="dashboard?section=favicon" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="logo" />
     <div class="admin-field">
