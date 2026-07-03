@@ -1,38 +1,56 @@
 {
-  "autre": {
-    "name": "Votre logiciel actuel",
-    "icon": "assets/images/autre.webp",
-    "badge": "Non certifié PDP",
-    "desc": "Votre logiciel actuel n'est pas certifié PDP pour la réforme 2026. Découvrez ci-dessous nos solutions certifiées pour rester conforme sans rupture de service.",
-    "href": "#",
-    "ctaText": "Comparer les solutions →"
-  },
-  "pennylane": {
-    "name": "Pennylane",
-    "icon": "assets/images/pennylane.webp",
-    "badge": "Certifié PDP",
-    "desc": "Comptabilité et facturation électronique tout-en-un, pensée pour les TPE/PME.",
-    "href": "#"
-  },
-  "sage": {
-    "name": "Sage",
-    "icon": "assets/images/sage.webp",
-    "badge": "Certifié PDP",
-    "desc": "Solution éprouvée pour la gestion comptable et la conformité 2026.",
-    "href": "#"
-  },
-  "quickbooks": {
-    "name": "QuickBooks",
-    "icon": "assets/images/quickbooks.webp",
-    "badge": "Partenaire",
-    "desc": "Facturation simple et automatisée, idéale pour démarrer rapidement.",
-    "href": "#"
-  },
-  "cegid": {
-    "name": "Cegid",
-    "icon": "assets/images/cegid.webp",
-    "badge": "Certifié PDP",
-    "desc": "Plateforme complète de comptabilité et facturation, des PME aux grands groupes.",
-    "href": "#"
-  }
+  "simple_gratuit": [
+    {
+      "name": "Tiime",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "La solution 100% gratuite, conforme 2026.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Abby",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "Pensé pour la simplicité des indépendants.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    }
+  ],
+  "automatiser_compta": [
+    {
+      "name": "Indy",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "Le leader de l'automatisation comptable.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Tiime",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "L'alternative gratuite avec compte pro.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    }
+  ],
+  "gestion_crm": [
+    {
+      "name": "Axonaut",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "Le tout-en-un français : Facturation, CRM, Trésorerie.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Karlia",
+      "icon": "assets/images/gear.webp",
+      "badge": "Partenaire",
+      "desc": "L'alternative puissante pour votre gestion commerciale.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    }
+  ]
 }
