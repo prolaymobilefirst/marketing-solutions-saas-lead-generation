@@ -57,9 +57,9 @@ Open `http://localhost:8080` to view. Test on mobile viewport in DevTools (375px
 
 **Single-page quiz approach**: All three quiz steps (Statut, Volume, Connexion) live in one HTML file (`quiz.html`). JavaScript shows/hides step sections without navigation, updating the progress bar and Session Storage on each transition.
 
-**Session Storage contract**: Each quiz answer is stored under keys `quiz_clientele`, `quiz_volume`, `quiz_connexion` (the storage/wire key names are historical — `quiz_volume` now holds the Étape 2 "priorité numéro 1" answer: `simple_gratuit` / `automatiser_compta` / `gestion_crm`, not an invoice-volume bucket). Back-navigation must restore the previously selected card's active state.
+**Session Storage contract**: Each quiz answer is stored under keys `quiz_clientele`, `quiz_volume`, `quiz_connexion` (the storage/wire key names are historical — `quiz_volume` now holds the Step 2 "priorité numéro 1" answer: `simple_gratuit` / `automatiser_compta` / `gestion_crm`, not an invoice-volume bucket). Back-navigation must restore the previously selected card's active state.
 
-**Results logic**: The results page shows exactly 2 recommended software cards, looked up directly from `content/affiliate-links.json` (keyed by the Étape 2 `quiz_volume` value, each key holding a fixed 2-entry array) — Étape 3's current-software answer is still collected and sent to Make.com but no longer affects the recommendation. 100% Particuliers (B2C) clients skip Étapes 2-3 and see a dedicated out-of-scope banner instead of the recommendation grid. This mapping/lookup lives entirely in `js/webhook.js`'s `buildRecommendations()` — no server-side logic.
+**Results logic**: The results page shows exactly 2 recommended software cards, looked up directly from `content/affiliate-links.json` (keyed by the Step 2 `quiz_volume` value, each key holding a fixed 2-entry array) — Step 3's current-software answer is still collected and sent to Make.com but no longer affects the recommendation. 100% Particuliers (B2C) clients skip Steps 2-3 and see a dedicated out-of-scope banner instead of the recommendation grid. This mapping/lookup lives entirely in `js/webhook.js`'s `buildRecommendations()` — no server-side logic.
 
 **Webhook payload** forwarded to Make.com (by `lib/submit-lead.js`, server-side) must include:
 ```json
