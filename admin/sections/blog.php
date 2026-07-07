@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'dateModified' => date('Y-m-d'),
                 'readTime' => trim((string) ($_POST['readTime'] ?? '')) ?: '5 min de lecture',
                 'ctaText' => trim((string) ($_POST['ctaText'] ?? '')) ?: 'Démarrer mon Diagnostic →',
-                'bodyHtml' => (string) ($_POST['bodyHtml'] ?? ''),
+                'contentBlocks' => blog_parse_blocks_from_post((array) ($_POST['blocks'] ?? [])),
             ];
 
             $originalSlug = trim((string) ($_POST['original_slug'] ?? ''));
@@ -122,9 +122,20 @@ $isNew = $_GET['new'] ?? false;
         <input type="text" name="ctaText" value="<?= htmlspecialchars($editing['ctaText'] ?? 'Démarrer mon Diagnostic →', ENT_QUOTES) ?>" />
       </div>
       <div class="admin-field">
-        <label>Corps de l'article (HTML)</label>
-        <textarea name="bodyHtml" data-richtext style="min-height:320px;font-family:monospace;"><?= htmlspecialchars($editing['bodyHtml'] ?? '', ENT_QUOTES) ?></textarea>
-        <span class="hint">Éditeur visuel (h2/h3, paragraphes, listes, citations, liens, gras/italique) — basculez en « Code source » pour du HTML brut. Ce contenu est inséré tel quel, sans échappement.</span>
+        <label>Corps de l'article</label>
+        <?php
+          // Legacy posts saved before the block editor only have `bodyHtml` —
+          // show that as a single starting text block rather than losing it.
+          $initialBlocks = $editing['contentBlocks']
+              ?? (!empty($editing['bodyHtml']) ? [['type' => 'text', 'html' => $editing['bodyHtml']]] : []);
+        ?>
+        <div class="content-blocks" id="content-blocks" data-initial-blocks="<?= htmlspecialchars(json_encode($initialBlocks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]', ENT_QUOTES) ?>"></div>
+        <div class="content-blocks-add">
+          <button type="button" class="admin-btn secondary" data-add-block="text">+ Bloc Texte</button>
+          <button type="button" class="admin-btn secondary" data-add-block="image">+ Bloc Image</button>
+          <button type="button" class="admin-btn secondary" data-add-block="video">+ Bloc Vidéo YouTube</button>
+        </div>
+        <span class="hint">Composez l'article en blocs — texte (h2/h3, paragraphes, listes, citations, liens), image ou vidéo YouTube — dans l'ordre exact où ils doivent apparaître sur la page. Les flèches réordonnent un bloc, la corbeille le supprime. Le texte est inséré tel quel, sans échappement.</span>
       </div>
 
       <button class="admin-btn" type="submit">Publier</button>

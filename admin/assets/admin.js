@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   initRichTextEditors();
+  initContentBlocks();
 });
 
 const RICHTEXT_BUTTONS = [
@@ -30,6 +31,9 @@ const RICHTEXT_BUTTONS = [
 
 function initRichTextEditors() {
   document.querySelectorAll('textarea[data-richtext]').forEach((textarea) => {
+    if (textarea.dataset.richtextInit) return; // re-run safely when blocks are added dynamically
+    textarea.dataset.richtextInit = '1';
+
     const wrapper = document.createElement('div');
     wrapper.className = 'richtext-field';
 
@@ -104,6 +108,111 @@ function initRichTextEditors() {
       form.addEventListener('submit', () => {
         if (!sourceMode) syncTextareaFromEditable();
       });
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   BLOG ARTICLE BODY — DYNAMIC CONTENT BLOCKS
+   Lets an admin compose an article body as an ordered list of text/image/
+   video blocks instead of one HTML blob. Each block gets a unique `key`
+   used only to group its form fields together (`blocks[key][field]`);
+   reordering moves the row's DOM position, not its key, and PHP rebuilds
+   the array in that new DOM order when the form posts.
+═══════════════════════════════════════════ */
+const CONTENT_BLOCK_LABELS = { text: 'Texte', image: 'Image', video: 'Vidéo YouTube' };
+let contentBlockKeySeq = 0;
+
+function nextContentBlockKey() {
+  return 'b' + Date.now().toString(36) + (contentBlockKeySeq++);
+}
+
+function escapeForBlockHtml(str) {
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function escapeForBlockAttr(str) {
+  return escapeForBlockHtml(str).replace(/"/g, '&quot;');
+}
+
+function buildContentBlockRow(type, data) {
+  data = data || {};
+  const key = nextContentBlockKey();
+  const row = document.createElement('div');
+  row.className = 'content-block';
+  row.dataset.type = type;
+
+  let fields = `<input type="hidden" name="blocks[${key}][type]" value="${type}" />`;
+  if (type === 'text') {
+    fields += `<textarea name="blocks[${key}][html]" data-richtext>${escapeForBlockHtml(data.html)}</textarea>`;
+  } else if (type === 'image') {
+    fields += `
+      <div class="admin-field">
+        <label>Image</label>
+        <input type="text" name="blocks[${key}][src]" value="${escapeForBlockAttr(data.src)}" list="media-files" placeholder="assets/images/exemple.webp" />
+      </div>
+      <div class="admin-field">
+        <label>Texte alternatif (accessibilité)</label>
+        <input type="text" name="blocks[${key}][alt]" value="${escapeForBlockAttr(data.alt)}" />
+      </div>`;
+  } else if (type === 'video') {
+    fields += `
+      <div class="admin-field">
+        <label>URL ou ID YouTube</label>
+        <input type="text" name="blocks[${key}][youtubeUrl]" value="${escapeForBlockAttr(data.youtubeId)}" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>`;
+  }
+
+  row.innerHTML = `
+    <div class="content-block-head">
+      <span class="content-block-label">${CONTENT_BLOCK_LABELS[type] || type}</span>
+      <div class="content-block-controls">
+        <button type="button" data-action="move-up" title="Monter">&uarr;</button>
+        <button type="button" data-action="move-down" title="Descendre">&darr;</button>
+        <button type="button" data-action="remove" title="Supprimer ce bloc">&times; Supprimer</button>
+      </div>
+    </div>
+    <div class="content-block-fields">${fields}</div>
+  `;
+  return row;
+}
+
+function initContentBlocks() {
+  const container = document.getElementById('content-blocks');
+  if (!container) return;
+
+  let initialBlocks = [];
+  try {
+    initialBlocks = JSON.parse(container.dataset.initialBlocks || '[]');
+  } catch {
+    initialBlocks = [];
+  }
+  initialBlocks.forEach((block) => {
+    if (block && block.type) container.appendChild(buildContentBlockRow(block.type, block));
+  });
+  initRichTextEditors();
+
+  document.querySelectorAll('[data-add-block]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      container.appendChild(buildContentBlockRow(btn.dataset.addBlock, {}));
+      initRichTextEditors();
+    });
+  });
+
+  container.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    e.preventDefault();
+    const row = btn.closest('.content-block');
+    if (!row) return;
+    if (btn.dataset.action === 'remove') {
+      row.remove();
+    } else if (btn.dataset.action === 'move-up') {
+      const prev = row.previousElementSibling;
+      if (prev) container.insertBefore(row, prev);
+    } else if (btn.dataset.action === 'move-down') {
+      const next = row.nextElementSibling;
+      if (next) container.insertBefore(next, row);
     }
   });
 }

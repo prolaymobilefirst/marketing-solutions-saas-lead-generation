@@ -59,6 +59,106 @@ function blog_build_article_schema(array $post): string
     return json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 }
 
+/* Accepts a full YouTube URL (watch/shorts/embed/youtu.be) or a bare video
+   ID and returns just the 11-char ID, or '' if it can't be parsed — never
+   trust this into a URL without checking for that empty-string case. */
+function blog_extract_youtube_id(string $input): string
+{
+    $input = trim($input);
+    if ($input === '') {
+        return '';
+    }
+    if (preg_match('/^[A-Za-z0-9_-]{11}$/', $input)) {
+        return $input;
+    }
+    if (preg_match('#(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})#', $input, $m)) {
+        return $m[1];
+    }
+    return '';
+}
+
+/**
+ * Normalizes the admin form's `blocks[key][...]` submission into the stored
+ * block schema. The submission is already in visitor-facing order: the
+ * block editor reorders blocks by moving their row within the DOM (not by
+ * renumbering keys), and browsers serialize form fields in DOM order, so
+ * PHP's array — built in first-seen-key order — comes out correctly
+ * ordered without any explicit sequence field.
+ *
+ * @param array<string,array<string,mixed>> $rawBlocks
+ * @return array<int,array<string,string>>
+ */
+function blog_parse_blocks_from_post(array $rawBlocks): array
+{
+    $blocks = [];
+    foreach ($rawBlocks as $raw) {
+        if (!is_array($raw)) {
+            continue;
+        }
+        $type = (string) ($raw['type'] ?? '');
+        if ($type === 'text') {
+            $html = trim((string) ($raw['html'] ?? ''));
+            if ($html === '') {
+                continue;
+            }
+            $blocks[] = ['type' => 'text', 'html' => $html];
+        } elseif ($type === 'image') {
+            $src = trim((string) ($raw['src'] ?? ''));
+            if ($src === '') {
+                continue;
+            }
+            $blocks[] = ['type' => 'image', 'src' => $src, 'alt' => trim((string) ($raw['alt'] ?? ''))];
+        } elseif ($type === 'video') {
+            $input = trim((string) ($raw['youtubeUrl'] ?? ''));
+            if ($input === '') {
+                continue;
+            }
+            $youtubeId = blog_extract_youtube_id($input);
+            if ($youtubeId === '') {
+                throw new RuntimeException("URL ou ID YouTube invalide pour un bloc vidéo : « $input »");
+            }
+            $blocks[] = ['type' => 'video', 'youtubeId' => $youtubeId];
+        }
+    }
+    return $blocks;
+}
+
+/** Renders ordered content blocks (text/image/video) into the article body HTML. */
+function blog_render_content_blocks(array $blocks): string
+{
+    $html = '';
+    foreach ($blocks as $block) {
+        $type = $block['type'] ?? '';
+        if ($type === 'text') {
+            $text = trim((string) ($block['html'] ?? ''));
+            if ($text === '') {
+                continue;
+            }
+            $html .= $text . "\n"; // trusted admin-authored HTML, inserted raw
+        } elseif ($type === 'image') {
+            $src = trim((string) ($block['src'] ?? ''));
+            if ($src === '') {
+                continue;
+            }
+            $html .= sprintf(
+                "<figure class=\"blog-content-image\"><img src=\"%s\" alt=\"%s\" loading=\"lazy\" /></figure>\n",
+                htmlspecialchars($src, ENT_QUOTES),
+                htmlspecialchars((string) ($block['alt'] ?? ''), ENT_QUOTES)
+            );
+        } elseif ($type === 'video') {
+            $youtubeId = (string) ($block['youtubeId'] ?? '');
+            if (!preg_match('/^[A-Za-z0-9_-]{11}$/', $youtubeId)) {
+                continue; // never build an iframe src from an unvalidated value
+            }
+            $html .= sprintf(
+                "<div class=\"blog-content-video\"><iframe src=\"https://www.youtube-nocookie.com/embed/%s\" title=\"Vidéo YouTube\" loading=\"lazy\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div>\n",
+                htmlspecialchars($youtubeId, ENT_QUOTES)
+            );
+        }
+    }
+    return $html;
+}
+
 function blog_render_related_articles(array $allPosts, string $excludeSlug): string
 {
     $others = array_filter($allPosts, fn($p, $slug) => $slug !== $excludeSlug, ARRAY_FILTER_USE_BOTH);
@@ -97,7 +197,7 @@ function blog_write_post_html(array $post): void
         '__ICON__' => htmlspecialchars($post['icon'], ENT_COMPAT),
         '__BADGE__' => cms_escape_text($post['badge']),
         '__INTRO__' => cms_escape_text($post['intro']),
-        '__BODY__' => $post['bodyHtml'], // trusted admin-authored HTML, inserted raw
+        '__BODY__' => blog_render_content_blocks($post['contentBlocks'] ?? []),
         '__CTA_TEXT__' => cms_escape_text($post['ctaText']),
         '__RELATED_ARTICLES__' => blog_render_related_articles($allPosts, $post['slug']),
     ];

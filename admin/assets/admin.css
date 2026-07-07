@@ -137,3 +137,24 @@ body {
   width: 100%; border: none; border-radius: 0; margin: 0; display: block;
 }
 .richtext-field textarea[hidden] { display: none; }
+
+/* ── Blog article body: dynamic content blocks (text/image/video) ── */
+.content-blocks { display: flex; flex-direction: column; gap: .85rem; }
+.content-block {
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); padding: .75rem;
+}
+.content-block-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem;
+}
+.content-block-label {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--teal);
+}
+.content-block-controls { display: flex; gap: .3rem; }
+.content-block-controls button {
+  padding: .3rem .55rem; border: 1px solid var(--border); border-radius: 6px; background: #fff;
+  color: var(--text); font-size: .8rem; cursor: pointer; line-height: 1.2;
+}
+.content-block-controls button:hover { background: #eef3f3; }
+.content-block-fields .admin-field:last-child { margin-bottom: 0; }
+.content-block-fields .richtext-editable { min-height: 160px; }
+.content-blocks-add { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
