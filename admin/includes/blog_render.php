@@ -244,7 +244,7 @@ function blog_render_grid_card(array $post): string
         $banner = sprintf(
             $bannerHtml,
             htmlspecialchars($post['image'], ENT_COMPAT),
-            cms_escape_text($post['title'])
+            htmlspecialchars($post['title'], ENT_QUOTES)
         );
     } else {
         $bannerHtml =
