@@ -70,7 +70,7 @@ Open `http://localhost:8080` in your browser either way.
 │   └── webhook.js      # Recommendation engine + Make.com webhook + form handling
 │
 ├── partials/
-│   ├── header.html     # Shared site header (logo + Mon Compte button)
+│   ├── header.html     # Shared site header (logo + trust badge)
 │   ├── footer.html     # Shared footer (copyright, blog link, legal links)
 │   └── partner-banner.html  # Shared partner logo strip
 │
