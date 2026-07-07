@@ -55,7 +55,7 @@ Open `http://localhost:8080` to view. Test on mobile viewport in DevTools (375px
 
 ## Architecture Decisions
 
-**Single-page quiz approach**: All three quiz steps (Statut, Volume, Connexion) live in one HTML file (`quiz.html`). JavaScript shows/hides step sections without navigation, updating the progress bar and Session Storage on each transition.
+**Single-page quiz approach**: All three quiz steps (Clientèle, Priorité, Connexion) live in one HTML file (`quiz.html`). JavaScript shows/hides step sections without navigation, updating the progress bar and Session Storage on each transition.
 
 **Session Storage contract**: Each quiz answer is stored under keys `quiz_clientele`, `quiz_volume`, `quiz_connexion` (the storage/wire key names are historical — `quiz_volume` now holds the Step 2 "priorité numéro 1" answer: `simple_gratuit` / `automatiser_compta` / `gestion_crm`, not an invoice-volume bucket). Back-navigation must restore the previously selected card's active state.
 
