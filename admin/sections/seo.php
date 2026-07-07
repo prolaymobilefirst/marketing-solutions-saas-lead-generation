@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'gtmContainerId' => trim((string) ($_POST['gtmContainerId'] ?? '')),
                 'googleSiteVerification' => trim((string) ($_POST['googleSiteVerification'] ?? '')),
                 'bingSiteVerification' => trim((string) ($_POST['bingSiteVerification'] ?? '')),
+                'metaPixelId' => trim((string) ($_POST['metaPixelId'] ?? '')),
                 'favicon' => site_settings_read()['favicon'],
             ]);
             $flash = 'Réglages globaux enregistrés sur toutes les pages.';
@@ -100,6 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="admin-field">
         <label for="f-bing-verif">Code de vérification Bing Webmaster Tools</label>
         <input type="text" id="f-bing-verif" name="bingSiteVerification" value="<?= htmlspecialchars($settings['bingSiteVerification'], ENT_QUOTES) ?>" placeholder="Contenu de la balise meta, sans les guillemets" />
+      </div>
+      <div class="admin-field">
+        <label for="f-meta-pixel">ID Meta Pixel</label>
+        <input type="text" id="f-meta-pixel" name="metaPixelId" value="<?= htmlspecialchars($settings['metaPixelId'], ENT_QUOTES) ?>" placeholder="1234567890123456" />
+        <span class="hint">Insère le code de base Meta Pixel (script + noscript) dans le &lt;head&gt; de toutes les pages. Laissez vide pour désactiver.</span>
       </div>
 
       <button class="admin-btn" type="submit">Enregistrer</button>
