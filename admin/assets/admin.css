@@ -163,6 +163,12 @@ body {
 .media-field-row input { flex: 1; min-width: 0; }
 .media-field-row .admin-btn { flex-shrink: 0; white-space: nowrap; }
 
+.content-block-image-preview:not(:empty) { margin-top: .6rem; }
+.content-block-image-preview img {
+  display: block; max-width: 220px; max-height: 140px; object-fit: contain;
+  border: 1px solid var(--border); border-radius: 6px; padding: .25rem; background: #fff;
+}
+
 /* ── Media picker modal (image content blocks) ── */
 .media-picker-overlay {
   position: fixed; inset: 0; background: rgba(15, 23, 30, .55);

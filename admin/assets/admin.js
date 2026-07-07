@@ -136,6 +136,15 @@ function escapeForBlockAttr(str) {
   return escapeForBlockHtml(str).replace(/"/g, '&quot;');
 }
 
+// Stored paths are root-relative ("assets/images/x.webp") for the public
+// site; previewing them inside /admin/ needs the "../" the browser thumbnail
+// grid also uses.
+function imagePreviewHtml(src) {
+  src = (src || '').trim();
+  if (!src) return '';
+  return `<img src="../${escapeForBlockAttr(src)}" alt="" loading="lazy" />`;
+}
+
 function buildContentBlockRow(type, data) {
   data = data || {};
   const key = nextContentBlockKey();
@@ -154,6 +163,7 @@ function buildContentBlockRow(type, data) {
           <input type="text" name="blocks[${key}][src]" value="${escapeForBlockAttr(data.src)}" list="media-files" placeholder="assets/images/exemple.webp" />
           <button type="button" class="admin-btn secondary" data-role="browse-image">Parcourir…</button>
         </div>
+        <div class="content-block-image-preview" data-role="image-preview">${imagePreviewHtml(data.src)}</div>
       </div>
       <div class="admin-field">
         <label>Texte alternatif (accessibilité)</label>
@@ -203,6 +213,13 @@ function initContentBlocks() {
     });
   });
 
+  container.addEventListener('input', (e) => {
+    if (!e.target.matches('input[name$="[src]"]')) return;
+    const row = e.target.closest('.content-block');
+    const preview = row ? row.querySelector('[data-role="image-preview"]') : null;
+    if (preview) preview.innerHTML = imagePreviewHtml(e.target.value);
+  });
+
   container.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
@@ -219,6 +236,14 @@ function initContentBlocks() {
       if (next) container.insertBefore(next, row);
     }
   });
+
+  // `error` doesn't bubble on <img>, so this needs capture-phase delegation
+  // rather than the plain container listener style used above.
+  container.addEventListener('error', (e) => {
+    if (e.target.matches && e.target.matches('[data-role="image-preview"] img')) {
+      e.target.replaceWith(document.createTextNode('Image introuvable.'));
+    }
+  }, true);
 }
 
 /* ═══════════════════════════════════════════
