@@ -232,6 +232,9 @@ function initMediaPicker() {
   const grid = document.getElementById('media-picker-grid');
   const closeBtn = document.getElementById('media-picker-close');
   const dataEl = document.getElementById('media-files-data');
+  const uploadBtn = document.getElementById('media-picker-upload-btn');
+  const uploadInput = document.getElementById('media-picker-file');
+  const uploadStatus = document.getElementById('media-picker-upload-status');
   if (!overlay || !grid || !closeBtn || !dataEl) return;
 
   let files = [];
@@ -241,16 +244,28 @@ function initMediaPicker() {
     files = [];
   }
 
-  grid.innerHTML = files.map((name) => {
-    const path = 'assets/images/' + name;
-    return `<button type="button" class="admin-media-item" data-path="${escapeForBlockAttr(path)}">
-      <img src="${escapeForBlockAttr(path)}" alt="" loading="lazy" />
-      <span class="path">${escapeForBlockHtml(name)}</span>
-    </button>`;
-  }).join('');
+  // Thumbnails must be displayed relative to /admin/ ("../assets/...") but
+  // the value written into the block's field — and served on the public
+  // site — is root-relative ("assets/..."), hence the two different paths.
+  function renderMediaGrid() {
+    grid.innerHTML = files.map((name) => {
+      const storedPath = 'assets/images/' + name;
+      const displayPath = '../assets/images/' + name;
+      return `<button type="button" class="admin-media-item" data-path="${escapeForBlockAttr(storedPath)}">
+        <img src="${escapeForBlockAttr(displayPath)}" alt="" loading="lazy" />
+        <span class="path">${escapeForBlockHtml(name)}</span>
+      </button>`;
+    }).join('');
+  }
+  renderMediaGrid();
 
   let targetInput = null;
   const closePicker = () => { overlay.hidden = true; targetInput = null; };
+  const selectPath = (path) => {
+    if (!targetInput) return;
+    targetInput.value = path;
+    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+  };
 
   document.addEventListener('click', (e) => {
     const browseBtn = e.target.closest('[data-role="browse-image"]');
@@ -258,17 +273,60 @@ function initMediaPicker() {
     e.preventDefault();
     const fieldsWrap = browseBtn.closest('.content-block-fields');
     targetInput = fieldsWrap ? fieldsWrap.querySelector('input[name$="[src]"]') : null;
+    if (uploadStatus) uploadStatus.textContent = '';
     overlay.hidden = false;
   });
 
   grid.addEventListener('click', (e) => {
     const item = e.target.closest('.admin-media-item');
     if (!item || !targetInput) return;
-    targetInput.value = item.dataset.path;
-    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+    selectPath(item.dataset.path);
     closePicker();
   });
 
   closeBtn.addEventListener('click', closePicker);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closePicker(); });
+
+  if (uploadBtn && uploadInput) {
+    uploadBtn.addEventListener('click', () => uploadInput.click());
+
+    uploadInput.addEventListener('change', async () => {
+      const file = uploadInput.files && uploadInput.files[0];
+      if (!file) return;
+
+      uploadBtn.disabled = true;
+      if (uploadStatus) {
+        uploadStatus.textContent = 'Téléversement en cours…';
+        uploadStatus.classList.remove('is-error');
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('csrf_token', overlay.dataset.csrf || '');
+
+      try {
+        const resp = await fetch('upload-media', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.error || `HTTP ${resp.status}`);
+        }
+        if (!files.includes(data.filename)) {
+          files.push(data.filename);
+          files.sort();
+          renderMediaGrid();
+        }
+        selectPath(data.path);
+        if (uploadStatus) uploadStatus.textContent = '';
+        closePicker();
+      } catch (err) {
+        if (uploadStatus) {
+          uploadStatus.textContent = 'Échec du téléversement : ' + err.message;
+          uploadStatus.classList.add('is-error');
+        }
+      } finally {
+        uploadBtn.disabled = false;
+        uploadInput.value = '';
+      }
+    });
+  }
 }

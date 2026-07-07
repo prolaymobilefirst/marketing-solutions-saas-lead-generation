@@ -180,3 +180,10 @@ body {
 .media-picker-head h3 { margin: 0; color: var(--navy); }
 .admin-media-item[type="button"] { cursor: pointer; font: inherit; }
 .admin-media-item[type="button"]:hover { border-color: var(--teal); }
+
+.media-picker-upload {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem;
+  padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border);
+}
+.media-picker-upload .hint { flex-basis: 100%; margin: 0; font-size: .75rem; color: #748089; }
+#media-picker-upload-status.is-error { color: var(--danger); }

@@ -193,11 +193,17 @@ $isNew = $_GET['new'] ?? false;
 <!-- Thumbnail browser for image content blocks — the datalist above is a
      plain text autocomplete, not a visual picker, so this covers that gap. -->
 <script id="media-files-data" type="application/json"><?= json_encode($mediaFileNames, JSON_UNESCAPED_SLASHES) ?: '[]' ?></script>
-<div class="media-picker-overlay" id="media-picker-overlay" hidden>
+<div class="media-picker-overlay" id="media-picker-overlay" data-csrf="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>" hidden>
   <div class="media-picker-modal">
     <div class="media-picker-head">
       <h3>Choisir une image</h3>
       <button type="button" id="media-picker-close" class="admin-btn secondary">Fermer</button>
+    </div>
+    <div class="media-picker-upload">
+      <input type="file" id="media-picker-file" accept=".webp,.png,.jpg,.jpeg,.svg" hidden />
+      <button type="button" id="media-picker-upload-btn" class="admin-btn">+ Téléverser depuis mon ordinateur</button>
+      <span class="hint">WebP, PNG, JPG ou SVG — 4 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé.</span>
+      <span class="hint" id="media-picker-upload-status"></span>
     </div>
     <div class="admin-grid-media" id="media-picker-grid"></div>
   </div>
