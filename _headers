@@ -1,3 +1,9 @@
+# Security headers — applied to every response
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+
 # Netlify cache-control headers
 # Versioned assets: cache 1 year (immutable — filenames must change on update)
 /css/*

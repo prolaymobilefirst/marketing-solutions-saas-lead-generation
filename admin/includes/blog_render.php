@@ -54,7 +54,7 @@ function blog_build_article_schema(array $post): string
         'datePublished' => $post['datePublished'],
         'dateModified' => $post['dateModified'],
         'author' => ['@type' => 'Organization', 'name' => 'Facturation Électronique 2026'],
-        'mainEntityOfPage' => BLOG_SITE_BASE . 'blog-' . $post['slug'] . '.html',
+        'mainEntityOfPage' => BLOG_SITE_BASE . 'blog-' . $post['slug'],
     ];
     return json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 }
@@ -185,7 +185,7 @@ function blog_write_post_html(array $post): void
     }
 
     $allPosts = blog_all_posts();
-    $canonical = BLOG_SITE_BASE . 'blog-' . $post['slug'] . '.html';
+    $canonical = BLOG_SITE_BASE . 'blog-' . $post['slug'];
 
     $replacements = [
         '__TITLE__' => cms_escape_text($post['title']),
@@ -287,11 +287,11 @@ function blog_regenerate_index(): void
         '@context' => 'https://schema.org',
         '@type' => 'Blog',
         'name' => 'Actualités Facturation Électronique 2026',
-        'url' => BLOG_SITE_BASE . 'blog.html',
+        'url' => BLOG_SITE_BASE . 'blog',
         'blogPost' => array_map(fn($p) => [
             '@type' => 'BlogPosting',
             'headline' => $p['title'],
-            'url' => BLOG_SITE_BASE . 'blog-' . $p['slug'] . '.html',
+            'url' => BLOG_SITE_BASE . 'blog-' . $p['slug'],
         ], $posts),
     ];
     $schemaJson = json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

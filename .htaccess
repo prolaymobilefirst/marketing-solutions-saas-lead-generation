@@ -48,4 +48,10 @@ RewriteRule ^(.+?)/?$ $1.html [E=CACHE_HTML:1,L]
   Header set Cache-Control "public, max-age=300" env=CACHE_SHORT
   Header set Cache-Control "public, max-age=0, must-revalidate" env=CACHE_HTML
   Header set Cache-Control "no-store" env=CACHE_NONE
+
+  # Security headers — mirrors the Netlify (_headers) / Vercel (vercel.json)
+  # security policy, applied to every response regardless of cache tagging.
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
 </IfModule>
