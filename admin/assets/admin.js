@@ -317,11 +317,30 @@ function initMediaPicker() {
     const browseBtn = e.target.closest('[data-role="browse-image"]');
     if (!browseBtn) return;
     e.preventDefault();
-    const fieldsWrap = browseBtn.closest('.content-block-fields');
-    targetInput = fieldsWrap ? fieldsWrap.querySelector('input[name$="[src]"]') : null;
+    if (browseBtn.dataset.target) {
+      targetInput = document.getElementById(browseBtn.dataset.target);
+    } else {
+      const fieldsWrap = browseBtn.closest('.content-block-fields');
+      targetInput = fieldsWrap ? fieldsWrap.querySelector('input[name$="[src]"]') : null;
+    }
     if (uploadStatus) uploadStatus.textContent = '';
     overlay.hidden = false;
   });
+
+  // Standalone fields (e.g. blog.php's Icône field) aren't inside
+  // #content-blocks, so they don't get the container-scoped preview sync
+  // from initContentBlocks() — this covers any input paired via
+  // data-preview-for with a [data-role="image-preview"] element.
+  document.addEventListener('input', (e) => {
+    if (!e.target.id) return;
+    const preview = document.querySelector(`[data-preview-for="${e.target.id}"]`);
+    if (preview) preview.innerHTML = imagePreviewHtml(e.target.value);
+  });
+  document.addEventListener('error', (e) => {
+    if (e.target.matches && e.target.matches('[data-preview-for] img')) {
+      e.target.replaceWith(document.createTextNode('Image introuvable.'));
+    }
+  }, true);
 
   grid.addEventListener('click', (e) => {
     const item = e.target.closest('.admin-media-item');

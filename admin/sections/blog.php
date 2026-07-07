@@ -91,7 +91,11 @@ $isNew = $_GET['new'] ?? false;
       </div>
       <div class="admin-field">
         <label>Icône</label>
-        <input type="text" name="icon" value="<?= htmlspecialchars($editing['icon'] ?? '', ENT_QUOTES) ?>" list="media-files" placeholder="assets/images/exemple.webp" />
+        <div class="media-field-row">
+          <input type="text" name="icon" id="blog-icon-input" value="<?= htmlspecialchars($editing['icon'] ?? '', ENT_QUOTES) ?>" list="media-files" placeholder="assets/images/exemple.webp" />
+          <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="blog-icon-input">Parcourir…</button>
+        </div>
+        <div class="content-block-image-preview" data-preview-for="blog-icon-input"><?= $editing && !empty($editing['icon']) ? '<img src="../' . htmlspecialchars($editing['icon'], ENT_QUOTES) . '" alt="" />' : '' ?></div>
       </div>
       <div class="admin-field">
         <label>Extrait (carte de la page Blog)</label>
