@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'title' => $title,
                 'badge' => trim((string) ($_POST['badge'] ?? '')),
                 'icon' => trim((string) ($_POST['icon'] ?? '')),
+                'image' => trim((string) ($_POST['image'] ?? '')),
                 'excerpt' => trim((string) ($_POST['excerpt'] ?? '')),
                 'intro' => trim((string) ($_POST['intro'] ?? '')),
                 'metaDescription' => trim((string) ($_POST['metaDescription'] ?? '')),
@@ -96,6 +97,15 @@ $isNew = $_GET['new'] ?? false;
           <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="blog-icon-input">Parcourir…</button>
         </div>
         <div class="content-block-image-preview" data-preview-for="blog-icon-input"><?= $editing && !empty($editing['icon']) ? '<img src="../' . htmlspecialchars($editing['icon'], ENT_QUOTES) . '" alt="" />' : '' ?></div>
+      </div>
+      <div class="admin-field">
+        <label>Image de couverture (optionnelle)</label>
+        <div class="media-field-row">
+          <input type="text" name="image" id="blog-image-input" value="<?= htmlspecialchars($editing['image'] ?? '', ENT_QUOTES) ?>" list="media-files" placeholder="assets/images/exemple.webp" />
+          <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="blog-image-input">Parcourir…</button>
+        </div>
+        <div class="content-block-image-preview" data-preview-for="blog-image-input"><?= $editing && !empty($editing['image']) ? '<img src="../' . htmlspecialchars($editing['image'], ENT_QUOTES) . '" alt="" />' : '' ?></div>
+        <span class="hint">Si renseignée, cette image remplace la bannière dégradée + icône sur la page /blog. Laissez vide pour garder l'apparence actuelle.</span>
       </div>
       <div class="admin-field">
         <label>Extrait (carte de la page Blog)</label>
