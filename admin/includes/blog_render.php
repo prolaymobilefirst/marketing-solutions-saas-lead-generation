@@ -236,13 +236,29 @@ function blog_resync_related_articles(array $post, array $allPosts): void
 
 function blog_render_grid_card(array $post): string
 {
+    if (!empty($post['image'])) {
+        $bannerHtml =
+            "        <div class=\"blog-grid-card-img has-image\">\n".
+            "          <img src=\"%s\" alt=\"%s\" loading=\"lazy\" />\n".
+            "        </div>\n";
+        $banner = sprintf(
+            $bannerHtml,
+            htmlspecialchars($post['image'], ENT_COMPAT),
+            cms_escape_text($post['title'])
+        );
+    } else {
+        $bannerHtml =
+            "        <div class=\"blog-grid-card-img\">\n".
+            "          <span class=\"blog-grid-card-img-circle\">\n".
+            "            <img src=\"%s\" alt=\"\" aria-hidden=\"true\" loading=\"lazy\" />\n".
+            "          </span>\n".
+            "        </div>\n";
+        $banner = sprintf($bannerHtml, htmlspecialchars($post['icon'], ENT_COMPAT));
+    }
+
     return sprintf(
         "\n      <a href=\"blog-%s.html\" class=\"blog-grid-card\">\n".
-        "        <div class=\"blog-grid-card-img\">\n".
-        "          <span class=\"blog-grid-card-img-circle\">\n".
-        "            <img src=\"%s\" alt=\"\" aria-hidden=\"true\" loading=\"lazy\" />\n".
-        "          </span>\n".
-        "        </div>\n".
+        "%s".
         "        <div class=\"blog-grid-card-body\">\n".
         "          <span class=\"blog-card-badge\">%s</span>\n".
         "          <h2 class=\"blog-grid-card-title\">%s</h2>\n".
@@ -252,7 +268,7 @@ function blog_render_grid_card(array $post): string
         "        </div>\n".
         "      </a>\n",
         htmlspecialchars($post['slug'], ENT_QUOTES),
-        htmlspecialchars($post['icon'], ENT_COMPAT),
+        $banner,
         cms_escape_text($post['badge']),
         cms_escape_text($post['title']),
         cms_escape_text($post['excerpt']),
