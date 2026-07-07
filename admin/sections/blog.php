@@ -172,10 +172,33 @@ $isNew = $_GET['new'] ?? false;
   </table>
 </div>
 
+<?php
+  $mediaFileNames = [];
+  foreach (scandir(__DIR__ . '/../../assets/images') ?: [] as $entry) {
+      if (str_starts_with($entry, '.')) {
+          continue;
+      }
+      if (is_file(__DIR__ . '/../../assets/images/' . $entry)) {
+          $mediaFileNames[] = $entry;
+      }
+  }
+  sort($mediaFileNames);
+?>
 <datalist id="media-files">
-  <?php foreach (scandir(__DIR__ . '/../../assets/images') ?: [] as $entry): ?>
-    <?php if (is_file(__DIR__ . '/../../assets/images/' . $entry)): ?>
-      <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
-    <?php endif; ?>
+  <?php foreach ($mediaFileNames as $entry): ?>
+    <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
   <?php endforeach; ?>
 </datalist>
+
+<!-- Thumbnail browser for image content blocks — the datalist above is a
+     plain text autocomplete, not a visual picker, so this covers that gap. -->
+<script id="media-files-data" type="application/json"><?= json_encode($mediaFileNames, JSON_UNESCAPED_SLASHES) ?: '[]' ?></script>
+<div class="media-picker-overlay" id="media-picker-overlay" hidden>
+  <div class="media-picker-modal">
+    <div class="media-picker-head">
+      <h3>Choisir une image</h3>
+      <button type="button" id="media-picker-close" class="admin-btn secondary">Fermer</button>
+    </div>
+    <div class="admin-grid-media" id="media-picker-grid"></div>
+  </div>
+</div>

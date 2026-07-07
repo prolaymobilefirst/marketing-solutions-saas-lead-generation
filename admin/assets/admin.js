@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initRichTextEditors();
   initContentBlocks();
+  initMediaPicker();
 });
 
 const RICHTEXT_BUTTONS = [
@@ -149,7 +150,10 @@ function buildContentBlockRow(type, data) {
     fields += `
       <div class="admin-field">
         <label>Image</label>
-        <input type="text" name="blocks[${key}][src]" value="${escapeForBlockAttr(data.src)}" list="media-files" placeholder="assets/images/exemple.webp" />
+        <div class="media-field-row">
+          <input type="text" name="blocks[${key}][src]" value="${escapeForBlockAttr(data.src)}" list="media-files" placeholder="assets/images/exemple.webp" />
+          <button type="button" class="admin-btn secondary" data-role="browse-image">Parcourir…</button>
+        </div>
       </div>
       <div class="admin-field">
         <label>Texte alternatif (accessibilité)</label>
@@ -215,4 +219,56 @@ function initContentBlocks() {
       if (next) container.insertBefore(next, row);
     }
   });
+}
+
+/* ═══════════════════════════════════════════
+   MEDIA PICKER — thumbnail browser for image content blocks
+   The `list="media-files"` datalist on the src input is a plain text
+   autocomplete; this adds an actual visual "Parcourir…" picker over the
+   same file list (embedded server-side as JSON, no extra request).
+═══════════════════════════════════════════ */
+function initMediaPicker() {
+  const overlay = document.getElementById('media-picker-overlay');
+  const grid = document.getElementById('media-picker-grid');
+  const closeBtn = document.getElementById('media-picker-close');
+  const dataEl = document.getElementById('media-files-data');
+  if (!overlay || !grid || !closeBtn || !dataEl) return;
+
+  let files = [];
+  try {
+    files = JSON.parse(dataEl.textContent || '[]');
+  } catch {
+    files = [];
+  }
+
+  grid.innerHTML = files.map((name) => {
+    const path = 'assets/images/' + name;
+    return `<button type="button" class="admin-media-item" data-path="${escapeForBlockAttr(path)}">
+      <img src="${escapeForBlockAttr(path)}" alt="" loading="lazy" />
+      <span class="path">${escapeForBlockHtml(name)}</span>
+    </button>`;
+  }).join('');
+
+  let targetInput = null;
+  const closePicker = () => { overlay.hidden = true; targetInput = null; };
+
+  document.addEventListener('click', (e) => {
+    const browseBtn = e.target.closest('[data-role="browse-image"]');
+    if (!browseBtn) return;
+    e.preventDefault();
+    const fieldsWrap = browseBtn.closest('.content-block-fields');
+    targetInput = fieldsWrap ? fieldsWrap.querySelector('input[name$="[src]"]') : null;
+    overlay.hidden = false;
+  });
+
+  grid.addEventListener('click', (e) => {
+    const item = e.target.closest('.admin-media-item');
+    if (!item || !targetInput) return;
+    targetInput.value = item.dataset.path;
+    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+    closePicker();
+  });
+
+  closeBtn.addEventListener('click', closePicker);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closePicker(); });
 }

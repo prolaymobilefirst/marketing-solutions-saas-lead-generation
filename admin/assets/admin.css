@@ -158,3 +158,25 @@ body {
 .content-block-fields .admin-field:last-child { margin-bottom: 0; }
 .content-block-fields .richtext-editable { min-height: 160px; }
 .content-blocks-add { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
+
+.media-field-row { display: flex; gap: .5rem; }
+.media-field-row input { flex: 1; min-width: 0; }
+.media-field-row .admin-btn { flex-shrink: 0; white-space: nowrap; }
+
+/* ── Media picker modal (image content blocks) ── */
+.media-picker-overlay {
+  position: fixed; inset: 0; background: rgba(15, 23, 30, .55);
+  display: flex; align-items: center; justify-content: center; padding: 2rem;
+  z-index: 1000;
+}
+.media-picker-overlay[hidden] { display: none; }
+.media-picker-modal {
+  background: #fff; border-radius: 10px; padding: 1.25rem 1.5rem; max-width: 720px;
+  width: 100%; max-height: 80vh; overflow-y: auto;
+}
+.media-picker-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
+}
+.media-picker-head h3 { margin: 0; color: var(--navy); }
+.admin-media-item[type="button"] { cursor: pointer; font: inherit; }
+.admin-media-item[type="button"]:hover { border-color: var(--teal); }

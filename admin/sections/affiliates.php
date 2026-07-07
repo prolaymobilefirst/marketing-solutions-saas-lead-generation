@@ -142,7 +142,7 @@ $editing = $editKey !== null && isset($catalog[$editKey]) ? $catalog[$editKey] :
 
 <datalist id="media-files">
   <?php foreach (scandir(__DIR__ . '/../../assets/images') ?: [] as $entry): ?>
-    <?php if (is_file(__DIR__ . '/../../assets/images/' . $entry)): ?>
+    <?php if (!str_starts_with($entry, '.') && is_file(__DIR__ . '/../../assets/images/' . $entry)): ?>
       <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
     <?php endif; ?>
   <?php endforeach; ?>
