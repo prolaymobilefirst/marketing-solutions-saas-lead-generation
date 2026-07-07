@@ -169,6 +169,12 @@ body {
   border: 1px solid var(--border); border-radius: 6px; padding: .25rem; background: #fff;
 }
 
+.content-block-video-preview:not(:empty) { margin-top: .6rem; }
+.content-block-video-preview iframe {
+  display: block; width: 100%; max-width: 400px; aspect-ratio: 16 / 9;
+  border: 1px solid var(--border); border-radius: 6px;
+}
+
 /* ── Media picker modal (image content blocks) ── */
 .media-picker-overlay {
   position: fixed; inset: 0; background: rgba(15, 23, 30, .55);

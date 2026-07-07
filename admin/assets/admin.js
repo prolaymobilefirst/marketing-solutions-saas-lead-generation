@@ -145,6 +145,21 @@ function imagePreviewHtml(src) {
   return `<img src="../${escapeForBlockAttr(src)}" alt="" loading="lazy" />`;
 }
 
+// Mirrors blog_extract_youtube_id() in admin/includes/blog_render.php — keep in sync.
+function extractYoutubeId(input) {
+  input = (input || '').trim();
+  if (!input) return '';
+  if (/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
+  const m = input.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+function videoPreviewHtml(input) {
+  const id = extractYoutubeId(input);
+  if (!id) return '';
+  return `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+}
+
 function buildContentBlockRow(type, data) {
   data = data || {};
   const key = nextContentBlockKey();
@@ -174,6 +189,7 @@ function buildContentBlockRow(type, data) {
       <div class="admin-field">
         <label>URL ou ID YouTube</label>
         <input type="text" name="blocks[${key}][youtubeUrl]" value="${escapeForBlockAttr(data.youtubeId)}" placeholder="https://www.youtube.com/watch?v=..." />
+        <div class="content-block-video-preview" data-role="video-preview">${videoPreviewHtml(data.youtubeId)}</div>
       </div>`;
   }
 
@@ -214,10 +230,15 @@ function initContentBlocks() {
   });
 
   container.addEventListener('input', (e) => {
-    if (!e.target.matches('input[name$="[src]"]')) return;
-    const row = e.target.closest('.content-block');
-    const preview = row ? row.querySelector('[data-role="image-preview"]') : null;
-    if (preview) preview.innerHTML = imagePreviewHtml(e.target.value);
+    if (e.target.matches('input[name$="[src]"]')) {
+      const row = e.target.closest('.content-block');
+      const preview = row ? row.querySelector('[data-role="image-preview"]') : null;
+      if (preview) preview.innerHTML = imagePreviewHtml(e.target.value);
+    } else if (e.target.matches('input[name$="[youtubeUrl]"]')) {
+      const row = e.target.closest('.content-block');
+      const preview = row ? row.querySelector('[data-role="video-preview"]') : null;
+      if (preview) preview.innerHTML = videoPreviewHtml(e.target.value);
+    }
   });
 
   container.addEventListener('click', (e) => {
