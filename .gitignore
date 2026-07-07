@@ -27,6 +27,8 @@ admin/data/login-attempts.json
 .netlify
 .vercel
 .remember
+.superpowers
+.claude
 
 # Node (no dependencies are checked in, but ignore in case any get installed locally)
 node_modules
