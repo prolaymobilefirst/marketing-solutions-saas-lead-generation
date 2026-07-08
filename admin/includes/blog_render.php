@@ -7,7 +7,7 @@ require_once __DIR__ . '/htmlpatch.php';
 const BLOG_CONTENT_DIR = __DIR__ . '/../../content/blog';
 const BLOG_TEMPLATE_PATH = __DIR__ . '/../../templates/blog-post.template.html';
 const BLOG_INDEX_PATH = __DIR__ . '/../../blog.html';
-const BLOG_SITE_BASE = 'https://www.facturation2026.fr/';
+const BLOG_SITE_BASE = 'https://portail-facture-2026.fr/';
 
 function blog_post_path(string $slug): string
 {
