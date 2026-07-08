@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRichTextEditors();
   initContentBlocks();
   initMediaPicker();
+  initBadgeSelect();
 });
 
 const RICHTEXT_BUTTONS = [
@@ -394,4 +395,22 @@ function initMediaPicker() {
       }
     });
   }
+}
+
+/* ═══════════════════════════════════════════
+   BADGE SELECT — blog.php's badge dropdown reveals a free-text field
+   when "+ Nouveau badge…" is chosen, instead of always showing it.
+═══════════════════════════════════════════ */
+function initBadgeSelect() {
+  const select = document.getElementById('blog-badge-select');
+  const newField = document.getElementById('blog-badge-new');
+  if (!select || !newField) return;
+
+  const sync = () => {
+    const isNew = select.value === '__new__';
+    newField.hidden = !isNew;
+    if (isNew) newField.focus();
+  };
+  select.addEventListener('change', sync);
+  sync();
 }

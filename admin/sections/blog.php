@@ -23,10 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $existing = blog_all_posts();
             $datePublished = trim((string) ($_POST['datePublished'] ?? '')) ?: ($existing[$slug]['datePublished'] ?? date('Y-m-d'));
 
+            $badgeChoice = trim((string) ($_POST['badge_choice'] ?? ''));
+            $badge = $badgeChoice === '__new__'
+                ? trim((string) ($_POST['badge_new'] ?? ''))
+                : $badgeChoice;
+
             $post = [
                 'slug' => $slug,
                 'title' => $title,
-                'badge' => trim((string) ($_POST['badge'] ?? '')),
+                'badge' => $badge,
                 'icon' => trim((string) ($_POST['icon'] ?? '')),
                 'image' => trim((string) ($_POST['image'] ?? '')),
                 'excerpt' => trim((string) ($_POST['excerpt'] ?? '')),
@@ -60,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $posts = blog_all_posts();
 uasort($posts, fn($a, $b) => strcmp($b['datePublished'] ?? '', $a['datePublished'] ?? ''));
 
+$badgeOptions = array_unique(array_filter(array_map(fn($p) => trim((string) ($p['badge'] ?? '')), $posts)));
+sort($badgeOptions);
+
 $editSlug = $_GET['edit'] ?? null;
 $editing = $editSlug !== null && isset($posts[$editSlug]) ? $posts[$editSlug] : null;
 $isNew = $_GET['new'] ?? false;
@@ -88,8 +96,20 @@ $isNew = $_GET['new'] ?? false;
       </div>
       <div class="admin-field">
         <label>Badge (catégorie)</label>
-        <input type="text" name="badge" value="<?= htmlspecialchars($editing['badge'] ?? '', ENT_QUOTES) ?>" list="badge-options" placeholder="Conformité" />
-        <span class="hint">Choisissez un badge existant dans la liste ou tapez-en un nouveau.</span>
+        <?php
+          $currentBadge = trim((string) ($editing['badge'] ?? ''));
+          $badgeSelectOptions = $currentBadge !== '' && !in_array($currentBadge, $badgeOptions, true)
+              ? array_merge($badgeOptions, [$currentBadge])
+              : $badgeOptions;
+          sort($badgeSelectOptions);
+        ?>
+        <select name="badge_choice" id="blog-badge-select">
+          <?php foreach ($badgeSelectOptions as $entry): ?>
+            <option value="<?= htmlspecialchars($entry, ENT_QUOTES) ?>" <?= $entry === $currentBadge ? 'selected' : '' ?>><?= htmlspecialchars($entry, ENT_QUOTES) ?></option>
+          <?php endforeach; ?>
+          <option value="__new__">+ Nouveau badge…</option>
+        </select>
+        <input type="text" name="badge_new" id="blog-badge-new" placeholder="Nom du nouveau badge" hidden />
       </div>
       <div class="admin-field">
         <label>Icône</label>
@@ -202,16 +222,6 @@ $isNew = $_GET['new'] ?? false;
 <datalist id="media-files">
   <?php foreach ($mediaFileNames as $entry): ?>
     <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
-  <?php endforeach; ?>
-</datalist>
-
-<?php
-  $badgeOptions = array_unique(array_filter(array_map(fn($p) => trim((string) ($p['badge'] ?? '')), $posts)));
-  sort($badgeOptions);
-?>
-<datalist id="badge-options">
-  <?php foreach ($badgeOptions as $entry): ?>
-    <option value="<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
   <?php endforeach; ?>
 </datalist>
 
