@@ -24,10 +24,10 @@
   <link rel="canonical" href="https://www.facturation2026.fr/results" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" href="css/styles.min.css" as="style" />
+  <link rel="preload" href="css/styles.min.css?v=20260708" as="style" />
   <link rel="preload" href="assets/images/conomnatene-trethre-2023.webp" as="image" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.min.css" />
+  <link rel="stylesheet" href="css/styles.min.css?v=20260708" />
 </head>
 <body>
 <!-- GTM_BODY_START --><!-- GTM_BODY_END -->
@@ -134,6 +134,9 @@
                       required
                       aria-label="Adresse e-mail"
                     />
+                    <button class="btn-submit results-cta-btn" type="submit" id="submit-btn" data-cms="results.submitBtn" data-cms-label="Texte du bouton d'envoi">
+                      Obtenir mon plan d'action (PDF)
+                    </button>
                   </div>
                   <label class="gdpr-row">
                     <input type="checkbox" id="gdpr" name="gdpr" required />
@@ -151,17 +154,11 @@
                   ✓ Merci&nbsp;! Votre plan d'action vous a été envoyé par e-mail.
                 </div>
 
-                <div class="lead-form-action" id="lead-form-action">
-                  <button class="btn-submit results-cta-btn" type="submit" id="submit-btn" data-cms="results.submitBtn" data-cms-label="Texte du bouton d'envoi">
-                    Obtenir mon plan d'action (PDF)
-                  </button>
-
-                  <div class="audit-trust">
-                    <img src="assets/images/graph.webp" alt="Graphique d'audit confidentiel" class="audit-trust-icon" loading="lazy" data-cms="results.auditTrustIcon" data-cms-kind="attr" data-cms-attr="src" />
-                    <div class="audit-trust-text">
-                      <strong data-cms="results.auditTrustTitle">Audit confidentiel.</strong>
-                      <span data-cms="results.auditTrustSub">Plus de 50 experts analysés.</span>
-                    </div>
+                <div class="audit-trust">
+                  <img src="assets/images/graph.webp" alt="Graphique d'audit confidentiel" class="audit-trust-icon" loading="lazy" data-cms="results.auditTrustIcon" data-cms-kind="attr" data-cms-attr="src" />
+                  <div class="audit-trust-text">
+                    <strong data-cms="results.auditTrustTitle">Audit confidentiel.</strong>
+                    <span data-cms="results.auditTrustSub">Plus de 50 experts analysés.</span>
                   </div>
                 </div>
               </div>
@@ -182,7 +179,7 @@
 
   <div id="site-footer"></div>
 
-  <script src="js/layout.min.js"></script>
-  <script src="js/webhook.min.js"></script>
+  <script src="js/layout.min.js?v=20260708"></script>
+  <script src="js/webhook.min.js?v=20260708"></script>
 </body>
 </html>
