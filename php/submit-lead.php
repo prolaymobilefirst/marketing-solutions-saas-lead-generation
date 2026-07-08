@@ -62,13 +62,24 @@ function submit_lead_validate_payload(array $body): ?array
         return null;
     }
 
+    $connexion = is_string($body['connexion'] ?? null) ? $body['connexion'] : '';
+
     return [
         'first_name' => $firstName,
         'email' => $email,
         'clientele' => is_string($body['clientele'] ?? null) ? $body['clientele'] : '',
         'statut' => is_string($body['statut'] ?? null) ? $body['statut'] : '',
         'volume' => is_string($body['volume'] ?? null) ? $body['volume'] : '',
-        'connexion' => is_string($body['connexion'] ?? null) ? $body['connexion'] : '',
+        'connexion' => $connexion,
+        // "logiciel" mirrors connexion (Step 3's current-software answer) under
+        // the label the Make.com sheet mapping expects; kept alongside
+        // connexion rather than renamed, so existing mappings don't break.
+        'logiciel' => $connexion,
+        // Always "Oui": submit_lead_forward_to_make only runs on a genuine
+        // lead submission, and the PDF token is only issued after this call
+        // succeeds, so every row that reaches the sheet corresponds to a
+        // report having been sent.
+        'rapport' => 'Oui',
         'timestamp' => submit_lead_iso8601_now(),
     ];
 }

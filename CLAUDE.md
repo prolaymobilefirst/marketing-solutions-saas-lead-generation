@@ -61,10 +61,11 @@ Open `http://localhost:8080` to view. Test on mobile viewport in DevTools (375px
 
 **Results logic**: The results page shows exactly 2 recommended software cards, looked up directly from `content/affiliate-links.json` (keyed by the Step 2 `quiz_volume` value, each key holding a fixed 2-entry array) — Step 3's current-software answer is still collected and sent to Make.com but no longer affects the recommendation. 100% Particuliers (B2C) clients skip Steps 2-3 and see a dedicated out-of-scope banner instead of the recommendation grid. This mapping/lookup lives entirely in `js/webhook.js`'s `buildRecommendations()` — no server-side logic.
 
-**Webhook payload** forwarded to Make.com (by `lib/submit-lead.js`, server-side) must include:
+**Webhook payload** forwarded to Make.com (by `lib/submit-lead.js` / `php/submit-lead.php`, server-side) must include:
 ```json
-{ "first_name": "", "email": "", "clientele": "", "statut": "", "volume": "", "connexion": "", "timestamp": "" }
+{ "first_name": "", "email": "", "clientele": "", "statut": "", "volume": "", "connexion": "", "logiciel": "", "rapport": "", "timestamp": "" }
 ```
+`logiciel` mirrors `connexion` (Step 3's current-software answer: sage/cegid/quickbooks/pennylane/autre) under the label the Make.com sheet column expects. `rapport` is always `"Oui"` — the Make.com call only happens on a genuine lead submission, and the PDF token is only issued after it succeeds, so every row that reaches the sheet corresponds to a report having been sent.
 
 **PDF download gating**: `js/webhook.js` posts the form to `/api/submit-lead`. Only on a genuine Make.com success does that function return a short-lived signed token (`lib/pdf-token.js`); the client then requests `/api/download-pdf?token=...`. Any request to that endpoint without a valid, unexpired token gets a 302 redirect to `/` — including direct/bookmarked access. The PDF itself (`server/assets/sample.pdf`) is never reachable as a static file. Requires `PDF_TOKEN_SECRET` env var on both platforms.
 
