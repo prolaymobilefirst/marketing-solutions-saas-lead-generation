@@ -45,6 +45,12 @@ body {
   display: flex; flex-direction: column; padding: 1.25rem 0;
 }
 .admin-logo { font-weight: 700; padding: 0 1.25rem 1rem; font-size: 1.05rem; }
+.admin-view-site {
+  display: block; margin: 0 1.25rem 1rem; padding: .5rem .75rem; text-align: center;
+  background: var(--teal); color: #fff; text-decoration: none; font-size: .85rem;
+  font-weight: 600; border-radius: 6px; transition: background .15s;
+}
+.admin-view-site:hover { background: var(--accent); }
 .admin-sidebar nav { display: flex; flex-direction: column; flex: 1; }
 .admin-sidebar nav a {
   color: #cfe3e3; text-decoration: none; padding: .65rem 1.25rem; font-size: .9rem;
@@ -67,6 +73,13 @@ body {
   background: #fff; border: 1px solid var(--border); border-radius: 10px;
   padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
 }
+
+.admin-help-toc {
+  columns: 2; column-gap: 2rem; list-style: none; padding: 0; margin: 0;
+}
+.admin-help-toc li { margin-bottom: .5rem; }
+.admin-help-toc a { color: var(--teal); text-decoration: none; font-weight: 600; }
+.admin-help-toc a:hover { text-decoration: underline; }
 
 .admin-field { margin-bottom: 1rem; display: flex; flex-direction: column; gap: .35rem; }
 .admin-field label { font-size: .8rem; font-weight: 600; color: #45525c; }

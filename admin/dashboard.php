@@ -13,6 +13,7 @@ const SECTIONS = [
     'pdf'        => ['label' => 'PDF (lead magnet)', 'file' => 'pdf.php'],
     'affiliates' => ['label' => 'Liens affiliés', 'file' => 'affiliates.php'],
     'blog'       => ['label' => 'Blog',          'file' => 'blog.php'],
+    'help'       => ['label' => 'Aide',          'file' => 'help.php'],
     'account'    => ['label' => 'Mon compte',    'file' => 'account.php'],
 ];
 
@@ -33,6 +34,9 @@ if (!isset(SECTIONS[$section])) {
   <div class="admin-shell">
     <aside class="admin-sidebar">
       <div class="admin-logo">2026 — Admin</div>
+      <a href="/" target="_blank" rel="noopener noreferrer" class="admin-view-site">
+        Voir le site ↗
+      </a>
       <nav>
         <?php foreach (SECTIONS as $key => $meta): ?>
           <a href="dashboard?section=<?= urlencode($key) ?>" class="<?= $key === $section ? 'active' : '' ?>">
