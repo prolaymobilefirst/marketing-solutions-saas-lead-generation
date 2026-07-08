@@ -88,7 +88,8 @@ $isNew = $_GET['new'] ?? false;
       </div>
       <div class="admin-field">
         <label>Badge (catégorie)</label>
-        <input type="text" name="badge" value="<?= htmlspecialchars($editing['badge'] ?? '', ENT_QUOTES) ?>" placeholder="Conformité" />
+        <input type="text" name="badge" value="<?= htmlspecialchars($editing['badge'] ?? '', ENT_QUOTES) ?>" list="badge-options" placeholder="Conformité" />
+        <span class="hint">Choisissez un badge existant dans la liste ou tapez-en un nouveau.</span>
       </div>
       <div class="admin-field">
         <label>Icône</label>
@@ -201,6 +202,16 @@ $isNew = $_GET['new'] ?? false;
 <datalist id="media-files">
   <?php foreach ($mediaFileNames as $entry): ?>
     <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
+  <?php endforeach; ?>
+</datalist>
+
+<?php
+  $badgeOptions = array_unique(array_filter(array_map(fn($p) => trim((string) ($p['badge'] ?? '')), $posts)));
+  sort($badgeOptions);
+?>
+<datalist id="badge-options">
+  <?php foreach ($badgeOptions as $entry): ?>
+    <option value="<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
   <?php endforeach; ?>
 </datalist>
 
