@@ -13,15 +13,27 @@ declare(strict_types=1);
 
    Convention on a tagged element:
      data-cms="some.key"                  required, unique key
-     data-cms-kind="text|attr|json"        optional, defaults to "text"
+     data-cms-kind="text|attr|json|html"   optional, defaults to "text"
      data-cms-attr="src|href|content|alt"  required when kind="attr"
      data-cms-label="Human label"          optional, shown in the admin form
 
    - kind "text": the element is a leaf (no nested tags) — its text content
      between the opening tag's ">" and the next "<" is the editable value.
    - kind "attr": the named attribute's value is the editable value.
-   - kind "json": the element is a <script type="application/ld+json">
-     block — its raw JSON text is the editable value. */
+   - kind "json"/"html": the element is a container whose raw inner content
+     (JSON text, or trusted admin-authored HTML) is the editable value,
+     substituted verbatim with no escaping.
+
+   Secondary key (same element, second independent field):
+     data-cms-2="some.other.key"           optional, second key on same tag
+     data-cms-2-attr="alt|href|..."        required when data-cms-2 present
+
+   HTML can't repeat the `data-cms` attribute name on one tag, so an element
+   that needs two independently editable properties (e.g. an <img>'s `src`
+   *and* `alt`, or an <a>'s text *and* `href`) uses `data-cms` for the first
+   and `data-cms-2` for the second. A secondary key is always kind="attr" —
+   a second independently-editable *text* region on one leaf element isn't a
+   real case this codebase has. */
 
 class CmsField
 {
@@ -31,13 +43,15 @@ class CmsField
         public ?string $attr,
         public ?string $label,
         public string $value,
+        public string $marker = 'data-cms',
     ) {}
 }
 
-function cms_open_tag_regex(string $key): string
+function cms_open_tag_regex(string $key, string $marker = 'data-cms'): string
 {
     $k = preg_quote($key, '/');
-    return '/<([a-zA-Z0-9]+)\b((?:[^>"]|"[^"]*")*?)\sdata-cms="' . $k . '"((?:[^>"]|"[^"]*")*?)>/s';
+    $m = preg_quote($marker, '/');
+    return '/<([a-zA-Z0-9]+)\b((?:[^>"]|"[^"]*")*?)\s' . $m . '="' . $k . '"((?:[^>"]|"[^"]*")*?)>/s';
 }
 
 // Text content only needs &/</> escaped — quotes are irrelevant outside
@@ -58,22 +72,34 @@ function cms_attr_value(string $tagAttrs, string $name): ?string
     return null;
 }
 
-/** @return CmsField[] every data-cms field found in $html, in document order */
-function cms_scan(string $html): array
+/** @return CmsField[] every field found in $html for one marker attribute, in document order */
+function cms_scan_by_marker(string $html, string $marker): array
 {
     $fields = [];
-    if (!preg_match_all('/<([a-zA-Z0-9]+)\b((?:[^>"]|"[^"]*")*?)\sdata-cms="([^"]+)"((?:[^>"]|"[^"]*")*?)(\/?)>/s', $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+    $m = preg_quote($marker, '/');
+    if (!preg_match_all('/<([a-zA-Z0-9]+)\b((?:[^>"]|"[^"]*")*?)\s' . $m . '="([^"]+)"((?:[^>"]|"[^"]*")*?)(\/?)>/s', $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
         return $fields;
     }
 
-    foreach ($matches as $m) {
-        $tag = $m[1][0];
-        $attrsCombined = $m[2][0] . ' ' . $m[4][0];
-        $key = $m[3][0];
+    $isSecondary = $marker !== 'data-cms';
+
+    foreach ($matches as $mm) {
+        $tag = $mm[1][0];
+        $attrsCombined = $mm[2][0] . ' ' . $mm[4][0];
+        $key = $mm[3][0];
+        $tagEndOffset = $mm[0][1] + strlen($mm[0][0]);
+
+        if ($isSecondary) {
+            $attrName = cms_attr_value($attrsCombined, $marker . '-attr');
+            $value = $attrName !== null ? (cms_attr_value($attrsCombined, $attrName) ?? '') : '';
+            $label = cms_attr_value($attrsCombined, $marker . '-label');
+            $fields[] = new CmsField($key, 'attr', $attrName, $label, trim($value), $marker);
+            continue;
+        }
+
         $kind = cms_attr_value($attrsCombined, 'data-cms-kind') ?? 'text';
         $attrName = cms_attr_value($attrsCombined, 'data-cms-attr');
         $label = cms_attr_value($attrsCombined, 'data-cms-label');
-        $tagEndOffset = $m[0][1] + strlen($m[0][0]);
 
         if ($kind === 'attr') {
             $value = $attrName !== null ? (cms_attr_value($attrsCombined, $attrName) ?? '') : '';
@@ -92,13 +118,19 @@ function cms_scan(string $html): array
     return $fields;
 }
 
-/**
- * Patches a single data-cms field in $html and returns the new HTML.
- * Caller must already know the field's kind/attr (from cms_scan()).
- */
-function cms_patch_field(string $html, string $key, string $kind, ?string $attrName, string $newValue): string
+/** @return CmsField[] every data-cms (+ data-cms-2) field found in $html, in document order */
+function cms_scan(string $html): array
 {
-    $openTagRe = cms_open_tag_regex($key);
+    return array_merge(cms_scan_by_marker($html, 'data-cms'), cms_scan_by_marker($html, 'data-cms-2'));
+}
+
+/**
+ * Patches a single data-cms (or data-cms-2) field in $html and returns the new HTML.
+ * Caller must already know the field's kind/attr/marker (from cms_scan()).
+ */
+function cms_patch_field(string $html, string $key, string $kind, ?string $attrName, string $newValue, string $marker = 'data-cms'): string
+{
+    $openTagRe = cms_open_tag_regex($key, $marker);
 
     if ($kind === 'attr') {
         if ($attrName === null) {
@@ -155,7 +187,7 @@ function cms_patch_many(string $html, array $fieldsByKey, array $updates): strin
             continue;
         }
         $f = $fieldsByKey[$key];
-        $html = cms_patch_field($html, $key, $f->kind, $f->attr, $newValue);
+        $html = cms_patch_field($html, $key, $f->kind, $f->attr, $newValue, $f->marker);
     }
     return $html;
 }
