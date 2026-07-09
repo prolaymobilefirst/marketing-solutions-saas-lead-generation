@@ -12,6 +12,7 @@ const SECTIONS = [
     'favicon'    => ['label' => 'Favicon & Logo', 'file' => 'favicon.php'],
     'pdf'        => ['label' => 'PDF (lead magnet)', 'file' => 'pdf.php'],
     'affiliates' => ['label' => 'Liens affiliés', 'file' => 'affiliates.php'],
+    'footer'     => ['label' => 'Pied de page',  'file' => 'footer.php'],
     'blog'       => ['label' => 'Blog',          'file' => 'blog.php'],
     'help'       => ['label' => 'Aide',          'file' => 'help.php'],
     'account'    => ['label' => 'Mon compte',    'file' => 'account.php'],
