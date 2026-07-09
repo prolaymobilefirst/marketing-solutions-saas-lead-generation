@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 const AFFILIATE_LINKS_PATH = __DIR__ . '/../../content/affiliate-links.json';
 
-/* The 3 fixed priority buckets, keyed the same way as quiz.html's Step 2
-   data-value attributes and sessionStorage's quiz_volume value. Each bucket
-   always holds exactly 2 recommendation slots — there is no add/delete UI
-   because the slot count is architecturally fixed, unlike the old
-   software-keyed catalog this replaces. */
-const PRIORITY_BUCKETS = [
-    'simple_gratuit'     => 'Priorité : Outil simple et gratuit',
-    'automatiser_compta' => 'Priorité : Automatiser la comptabilité',
-    'gestion_crm'        => 'Priorité : Gestion tout-en-un / CRM',
+/* The 3 fixed current-software buckets, keyed the same way as quiz.html's
+   Step 3 data-value attributes and sessionStorage's quiz_connexion value
+   (Sage, Cegid and EBP all route to the shared "sage_ebp" bucket). Slot
+   count varies per bucket — "autre" and "pennylane" show 3 recommendations,
+   "sage_ebp" only 2 — there is no add/delete UI because the counts are
+   architecturally fixed per bucket. */
+const CONNEXION_BUCKETS = [
+    'autre'     => ['label' => 'Logiciel actuel : Autre logiciel, Excel, Word...', 'slots' => 3],
+    'pennylane' => ['label' => 'Logiciel actuel : Pennylane', 'slots' => 3],
+    'sage_ebp'  => ['label' => 'Logiciel actuel : Sage, Cegid ou EBP', 'slots' => 2],
 ];
 
 $flash = null;
@@ -23,16 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $incoming = $_POST['fields'] ?? [];
-        foreach (PRIORITY_BUCKETS as $bucket => $label) {
+        foreach (CONNEXION_BUCKETS as $bucket => $config) {
             if (!isset($incoming[$bucket]) || !is_array($incoming[$bucket])) {
                 continue;
             }
             $slots = [];
-            foreach ([0, 1] as $slot) {
+            for ($slot = 0; $slot < $config['slots']; $slot++) {
                 $raw = $incoming[$bucket][$slot] ?? [];
                 $name = trim((string) ($raw['name'] ?? ''));
                 if ($name === '') {
-                    throw new RuntimeException("Le nom est obligatoire pour chaque logiciel ($label, emplacement " . ($slot + 1) . ").");
+                    throw new RuntimeException("Le nom est obligatoire pour chaque logiciel ({$config['label']}, emplacement " . ($slot + 1) . ").");
                 }
                 $entry = [
                     'name'  => $name,
@@ -45,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($ctaText !== '') {
                     $entry['ctaText'] = $ctaText;
                 }
-                $slots[$slot] = $entry;
+                $slots[] = $entry;
             }
-            $catalog[$bucket] = [$slots[0], $slots[1]];
+            $catalog[$bucket] = $slots;
         }
         flatfile_write_json(AFFILIATE_LINKS_PATH, $catalog);
         $flash = 'Catalogue de recommandations enregistré.';
@@ -60,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $catalog = flatfile_read_json(AFFILIATE_LINKS_PATH, []);
 ?>
 <h2>Liens affiliés</h2>
-<p class="hint">Ce catalogue alimente les 2 cartes logiciel affichées sur la page Résultat. Chaque priorité (Étape 2 du Quiz) a exactement 2 emplacements fixes.</p>
+<p class="hint">Ce catalogue alimente les cartes logiciel affichées sur la page Résultat, choisies selon la réponse à l'Étape 3 du Quiz (logiciel comptable actuel).</p>
 
 <?php if ($flash): ?>
   <div class="admin-flash <?= $flashType ?>"><?= htmlspecialchars($flash, ENT_QUOTES) ?></div>
@@ -69,10 +70,10 @@ $catalog = flatfile_read_json(AFFILIATE_LINKS_PATH, []);
 <form method="post">
   <?= csrf_field() ?>
 
-  <?php foreach (PRIORITY_BUCKETS as $bucket => $label): ?>
+  <?php foreach (CONNEXION_BUCKETS as $bucket => $config): ?>
     <div class="admin-card">
-      <h3><?= htmlspecialchars($label, ENT_QUOTES) ?></h3>
-      <?php foreach ([0, 1] as $slot): ?>
+      <h3><?= htmlspecialchars($config['label'], ENT_QUOTES) ?></h3>
+      <?php for ($slot = 0; $slot < $config['slots']; $slot++): ?>
         <?php $entry = $catalog[$bucket][$slot] ?? []; ?>
         <fieldset style="border:1px solid #ddd;padding:1rem;margin-bottom:1rem;">
           <legend>Emplacement <?= $slot + 1 ?></legend>

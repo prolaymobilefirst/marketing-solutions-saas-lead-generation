@@ -1,26 +1,8 @@
 {
-  "simple_gratuit": [
-    {
-      "name": "Tiime",
-      "icon": "assets/images/gear.webp",
-      "badge": "Partenaire",
-      "desc": "La solution 100% gratuite, conforme 2026.",
-      "href": "#",
-      "ctaText": "Découvrir →"
-    },
-    {
-      "name": "Abby",
-      "icon": "assets/images/gear.webp",
-      "badge": "Partenaire",
-      "desc": "Pensé pour la simplicité des indépendants.",
-      "href": "#",
-      "ctaText": "Découvrir →"
-    }
-  ],
-  "automatiser_compta": [
+  "autre": [
     {
       "name": "Indy",
-      "icon": "assets/images/gear.webp",
+      "icon": "assets/images/indy.webp",
       "badge": "Partenaire",
       "desc": "Le leader de l'automatisation comptable.",
       "href": "#",
@@ -28,27 +10,61 @@
     },
     {
       "name": "Tiime",
-      "icon": "assets/images/gear.webp",
+      "icon": "assets/images/tiime.webp",
       "badge": "Partenaire",
       "desc": "L'alternative gratuite avec compte pro.",
       "href": "#",
       "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Abby",
+      "icon": "assets/images/abby.webp",
+      "badge": "Partenaire",
+      "desc": "Pensé pour la simplicité des indépendants.",
+      "href": "#",
+      "ctaText": "Découvrir →"
     }
   ],
-  "gestion_crm": [
+  "pennylane": [
     {
-      "name": "Axonaut",
-      "icon": "assets/images/gear.webp",
+      "name": "Tiime",
+      "icon": "assets/images/tiime.webp",
       "badge": "Partenaire",
-      "desc": "Le tout-en-un français : Facturation, CRM, Trésorerie.",
+      "desc": "L'alternative gratuite avec compte pro.",
       "href": "#",
       "ctaText": "Découvrir →"
     },
     {
+      "name": "Indy",
+      "icon": "assets/images/indy.webp",
+      "badge": "Partenaire",
+      "desc": "Le leader de l'automatisation comptable.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Axonaut",
+      "icon": "assets/images/axonaut.webp",
+      "badge": "Partenaire",
+      "desc": "Le tout-en-un français : Facturation, CRM, Trésorerie.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    }
+  ],
+  "sage_ebp": [
+    {
       "name": "Karlia",
-      "icon": "assets/images/gear.webp",
+      "icon": "assets/images/karlia.webp",
       "badge": "Partenaire",
       "desc": "L'alternative puissante pour votre gestion commerciale.",
+      "href": "#",
+      "ctaText": "Découvrir →"
+    },
+    {
+      "name": "Axonaut",
+      "icon": "assets/images/axonaut.webp",
+      "badge": "Partenaire",
+      "desc": "Le tout-en-un français : Facturation, CRM, Trésorerie.",
       "href": "#",
       "ctaText": "Découvrir →"
     }
