@@ -26,3 +26,8 @@
 # Partials: short cache so updates propagate quickly
 /partials/*
   Cache-Control: public, max-age=300
+
+# Admin-editable content JSON (affiliate links, blog metadata): same short
+# cache as partials — edits made in the admin panel must reach visitors fast
+/content/*
+  Cache-Control: public, max-age=300

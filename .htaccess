@@ -9,6 +9,7 @@ RewriteEngine On
 RewriteRule ^$ - [E=CACHE_HTML:1]
 RewriteRule ^(css|js|assets)/ - [E=CACHE_IMMUTABLE:1]
 RewriteRule ^partials/ - [E=CACHE_SHORT:1]
+RewriteRule ^content/ - [E=CACHE_SHORT:1]
 RewriteRule ^(admin|api-php|api)/ - [E=CACHE_NONE:1]
 
 # Lead funnel API — same public paths as the Netlify/Vercel functions, so
