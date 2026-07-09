@@ -107,7 +107,7 @@ $catalog = flatfile_read_json(AFFILIATE_LINKS_PATH, []);
             <input type="text" name="fields[<?= $bucket ?>][<?= $slot ?>][ctaText]" value="<?= htmlspecialchars($entry['ctaText'] ?? '', ENT_QUOTES) ?>" placeholder="Découvrir →" />
           </div>
         </fieldset>
-      <?php endforeach; ?>
+      <?php endfor; ?>
     </div>
   <?php endforeach; ?>
 
