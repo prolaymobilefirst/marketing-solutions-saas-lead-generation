@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- Guard: results.html must only be reachable after finishing the quiz
+       (or the B2C-out-of-scope shortcut from step 1). Runs before anything
+       else renders so a direct/bookmarked visit bounces to the funnel start
+       instead of flashing recommendations built from empty session data. -->
+  <script>
+  (function () {
+    var clientele = sessionStorage.getItem('quiz_clientele');
+    var quizComplete = clientele === 'b2c' ||
+      (!!clientele && !!sessionStorage.getItem('quiz_volume') && !!sessionStorage.getItem('quiz_connexion'));
+    if (!quizComplete) {
+      window.location.replace('index.html');
+    }
+  })();
+  </script>
   <!-- GTM_HEAD_START --><!-- GTM_HEAD_END -->
   <!-- META_PIXEL_START -->
   <script>
