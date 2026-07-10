@@ -46,6 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($ctaText !== '') {
                     $entry['ctaText'] = $ctaText;
                 }
+                $promo = trim((string) ($raw['promo'] ?? ''));
+                if ($promo !== '') {
+                    $entry['promo'] = $promo;
+                }
                 $slots[] = $entry;
             }
             $catalog[$bucket] = $slots;
@@ -97,6 +101,10 @@ $catalog = flatfile_read_json(AFFILIATE_LINKS_PATH, []);
           <div class="admin-field">
             <label>Description</label>
             <textarea name="fields[<?= $bucket ?>][<?= $slot ?>][desc]"><?= htmlspecialchars($entry['desc'] ?? '', ENT_QUOTES) ?></textarea>
+          </div>
+          <div class="admin-field">
+            <label>Offre promo (optionnel — étiquette verte affichée sur la carte)</label>
+            <input type="text" name="fields[<?= $bucket ?>][<?= $slot ?>][promo]" value="<?= htmlspecialchars($entry['promo'] ?? '', ENT_QUOTES) ?>" placeholder="1 MOIS OFFERT" />
           </div>
           <div class="admin-field">
             <label>Lien affilié (URL)</label>
