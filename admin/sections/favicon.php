@@ -1,17 +1,26 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../includes/uploads.php';
 require_once __DIR__ . '/../includes/site_settings.php';
 require_once __DIR__ . '/../includes/htmlpatch.php';
 
 const FAVICON_DIR = __DIR__ . '/../../assets/images';
-const FAVICON_MAX_BYTES = 1 * 1024 * 1024;
-const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 const HEADER_PARTIAL_PATH = __DIR__ . '/../../partials/header.html';
 
 $flash = null;
 $flashType = 'success';
+
+/** Confirms $src ("assets/images/x.webp") resolves to a real file inside
+ *  assets/images, so a hand-edited field value can't point outside it. */
+function favicon_resolve_asset_path(string $src): ?string
+{
+    $resolved = realpath(__DIR__ . '/../../' . $src);
+    $assetsRoot = realpath(FAVICON_DIR);
+    if ($resolved === false || $assetsRoot === false || !str_starts_with($resolved, $assetsRoot . DIRECTORY_SEPARATOR)) {
+        return null;
+    }
+    return $resolved;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
@@ -19,47 +28,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'favicon') {
-            if (empty($_FILES['favicon']) || $_FILES['favicon']['error'] === UPLOAD_ERR_NO_FILE) {
-                throw new UploadError('Choisissez un fichier à téléverser.');
+            $src = trim((string) ($_POST['favicon_src'] ?? ''));
+            if ($src === '' || favicon_resolve_asset_path($src) === null) {
+                throw new RuntimeException('Choisissez une image valide.');
             }
-            $validated = validate_uploaded_file($_FILES['favicon'], UPLOAD_FAVICON_MIME_EXT, FAVICON_MAX_BYTES);
-
-            // Fixed filename (favicon.<ext>) — overwritten each time, and any
-            // stale favicon.* with a different extension from a previous
-            // upload is removed so the <link> tag never points at a leftover.
-            foreach (glob(FAVICON_DIR . '/favicon.*') ?: [] as $stale) {
-                @unlink($stale);
-            }
-            $filename = 'favicon.' . $validated['ext'];
-            move_validated_upload($validated, FAVICON_DIR . '/' . $filename);
 
             $settings = site_settings_read();
-            $settings['favicon'] = 'assets/images/' . $filename;
+            $settings['favicon'] = $src;
             site_settings_save($settings);
 
             $flash = 'Favicon mis à jour sur toutes les pages.';
         } elseif ($action === 'logo') {
-            if (empty($_FILES['logo']) || $_FILES['logo']['error'] === UPLOAD_ERR_NO_FILE) {
-                throw new UploadError('Choisissez un fichier à téléverser.');
+            $src = trim((string) ($_POST['logo_src'] ?? ''));
+            if ($src === '' || favicon_resolve_asset_path($src) === null) {
+                throw new RuntimeException('Choisissez une image valide.');
             }
-            $validated = validate_uploaded_file($_FILES['logo'], UPLOAD_IMAGE_MIME_EXT, LOGO_MAX_BYTES);
-            $validated = convert_image_to_webp($validated);
-
-            // Same fixed-filename-overwrite pattern as the favicon, so the
-            // header partial's <img src> never needs to change shape, only
-            // the file behind it.
-            foreach (glob(FAVICON_DIR . '/logo.*') ?: [] as $stale) {
-                @unlink($stale);
-            }
-            $filename = 'logo.' . $validated['ext'];
-            move_validated_upload($validated, FAVICON_DIR . '/' . $filename);
 
             $html = file_get_contents(HEADER_PARTIAL_PATH);
             if ($html === false) {
                 throw new RuntimeException('Impossible de lire partials/header.html.');
             }
             $keyed = cms_scan_keyed($html);
-            $patched = cms_patch_many($html, $keyed, ['header.logo' => 'assets/images/' . $filename]);
+            $patched = cms_patch_many($html, $keyed, ['header.logo' => $src]);
             flatfile_write_raw(HEADER_PARTIAL_PATH, $patched);
 
             $flash = 'Logo mis à jour sur toutes les pages (en-tête partagé).';
@@ -85,42 +75,74 @@ $currentLogo = $logoField?->value ?? '';
 
 <div class="admin-card">
   <h3>Favicon actuel</h3>
-  <?php if ($currentFavicon): ?>
-    <img src="../<?= htmlspecialchars($currentFavicon, ENT_QUOTES) ?>" alt="" style="width:32px;height:32px;object-fit:contain;" />
-    <p class="hint"><?= htmlspecialchars($currentFavicon, ENT_QUOTES) ?></p>
-  <?php else: ?>
-    <p>Aucun favicon n'est actuellement configuré.</p>
-  <?php endif; ?>
   <p class="hint">Synchronisé automatiquement sur toutes les pages (accueil, quiz, résultat, blog et chaque article) à chaque mise à jour.</p>
-  <form method="post" action="dashboard?section=favicon" enctype="multipart/form-data">
+  <form method="post" action="dashboard?section=favicon">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="favicon" />
     <div class="admin-field">
-      <label>Téléverser un nouveau favicon</label>
-      <input type="file" name="favicon" accept=".ico,.png,.svg" required />
-      <span class="hint">ICO, PNG ou SVG — 1 Mo maximum. Le type réel du fichier est vérifié côté serveur.</span>
+      <label>Favicon</label>
+      <div class="media-field-row">
+        <input type="text" name="favicon_src" id="favicon-src" value="<?= htmlspecialchars($currentFavicon, ENT_QUOTES) ?>" list="media-files" placeholder="assets/images/favicon.png" />
+        <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="favicon-src">Parcourir…</button>
+      </div>
+      <span class="hint">PNG ou SVG recommandés (carré, fond transparent).</span>
+      <div class="content-block-image-preview" data-preview-for="favicon-src"><?= $currentFavicon !== '' ? '<img src="../' . htmlspecialchars($currentFavicon, ENT_QUOTES) . '" alt="" />' : '' ?></div>
     </div>
-    <button class="admin-btn" type="submit">Téléverser et appliquer</button>
+    <button class="admin-btn" type="submit">Enregistrer</button>
   </form>
 </div>
 
 <div class="admin-card">
   <h3>Logo du site</h3>
-  <?php if ($currentLogo): ?>
-    <img src="../<?= htmlspecialchars($currentLogo, ENT_QUOTES) ?>" alt="" style="max-width:160px;max-height:60px;object-fit:contain;" />
-    <p class="hint"><?= htmlspecialchars($currentLogo, ENT_QUOTES) ?></p>
-  <?php else: ?>
-    <p>Logo introuvable dans partials/header.html.</p>
-  <?php endif; ?>
   <p class="hint">Logo affiché dans l'en-tête (<code>partials/header.html</code>), partagé par toutes les pages — une seule mise à jour suffit.</p>
-  <form method="post" action="dashboard?section=favicon" enctype="multipart/form-data">
+  <form method="post" action="dashboard?section=favicon">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="logo" />
     <div class="admin-field">
-      <label>Téléverser un nouveau logo</label>
-      <input type="file" name="logo" accept=".webp,.png,.jpg,.jpeg,.svg" required />
-      <span class="hint">WebP, PNG, JPG ou SVG — 2 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé (taille réduite, qualité visuelle conservée) ; le type réel du fichier est vérifié côté serveur.</span>
+      <label>Logo</label>
+      <div class="media-field-row">
+        <input type="text" name="logo_src" id="logo-src" value="<?= htmlspecialchars($currentLogo, ENT_QUOTES) ?>" list="media-files" placeholder="assets/images/logo.webp" />
+        <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="logo-src">Parcourir…</button>
+      </div>
+      <div class="content-block-image-preview" data-preview-for="logo-src"><?= $currentLogo !== '' ? '<img src="../' . htmlspecialchars($currentLogo, ENT_QUOTES) . '" alt="" />' : '' ?></div>
     </div>
-    <button class="admin-btn" type="submit">Téléverser et appliquer</button>
+    <button class="admin-btn" type="submit">Enregistrer</button>
   </form>
+</div>
+
+<?php
+  $mediaFileNames = [];
+  foreach (scandir(__DIR__ . '/../../assets/images') ?: [] as $entry) {
+      if (str_starts_with($entry, '.')) {
+          continue;
+      }
+      if (is_file(__DIR__ . '/../../assets/images/' . $entry)) {
+          $mediaFileNames[] = $entry;
+      }
+  }
+  sort($mediaFileNames);
+?>
+<datalist id="media-files">
+  <?php foreach ($mediaFileNames as $entry): ?>
+    <option value="assets/images/<?= htmlspecialchars($entry, ENT_QUOTES) ?>"></option>
+  <?php endforeach; ?>
+</datalist>
+
+<!-- Thumbnail browser for the favicon/logo fields — the datalist above is a
+     plain text autocomplete, not a visual picker, so this covers that gap. -->
+<script id="media-files-data" type="application/json"><?= json_encode($mediaFileNames, JSON_UNESCAPED_SLASHES) ?: '[]' ?></script>
+<div class="media-picker-overlay" id="media-picker-overlay" data-csrf="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>" hidden>
+  <div class="media-picker-modal">
+    <div class="media-picker-head">
+      <h3>Choisir une image</h3>
+      <button type="button" id="media-picker-close" class="admin-btn secondary">Fermer</button>
+    </div>
+    <div class="media-picker-upload">
+      <input type="file" id="media-picker-file" accept=".webp,.png,.jpg,.jpeg,.svg" hidden />
+      <button type="button" id="media-picker-upload-btn" class="admin-btn">+ Téléverser depuis mon ordinateur</button>
+      <span class="hint">WebP, PNG, JPG ou SVG — 4 Mo maximum. Les PNG/JPG sont automatiquement convertis en WebP optimisé.</span>
+      <span class="hint" id="media-picker-upload-status"></span>
+    </div>
+    <div class="admin-grid-media" id="media-picker-grid"></div>
+  </div>
 </div>
