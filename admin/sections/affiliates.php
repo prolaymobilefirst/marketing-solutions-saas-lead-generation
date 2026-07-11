@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 const AFFILIATE_LINKS_PATH = __DIR__ . '/../../content/affiliate-links.json';
 
-/* The 3 fixed current-software buckets, keyed the same way as quiz.html's
-   Step 3 data-value attributes and sessionStorage's quiz_connexion value
-   (Sage, Cegid and EBP all route to the shared "sage_ebp" bucket). Slot
-   count varies per bucket — "autre" and "pennylane" show 3 recommendations,
-   "sage_ebp" only 2 — there is no add/delete UI because the counts are
-   architecturally fixed per bucket. */
+/* The 2 fixed recommendation buckets, keyed the same way as js/webhook.js's
+   CONNEXION_BUCKET. "crm" is shown whenever the visitor's Step 2 priority
+   answer was "gestion_crm" (tout-en-un / CRM), overriding Step 3 entirely,
+   and otherwise whenever Step 3's current software is Pennylane, Sage,
+   Cegid or EBP — all four route to "crm" as the closest analog (Pennylane
+   already covers core accounting, so CRM tools are the complementary
+   upsell; Cegid was never given its own recommendation set). Slot count
+   varies per bucket — "autre" shows 3 recommendations, "crm" only 2 —
+   there is no add/delete UI because the counts are architecturally fixed
+   per bucket. */
 const CONNEXION_BUCKETS = [
-    'autre'     => ['label' => 'Logiciel actuel : Autre logiciel, Excel, Word...', 'slots' => 3],
-    'pennylane' => ['label' => 'Logiciel actuel : Pennylane', 'slots' => 3],
-    'sage_ebp'  => ['label' => 'Logiciel actuel : Sage, Cegid ou EBP', 'slots' => 2],
+    'autre' => ['label' => 'Logiciel actuel : Autre logiciel, Excel, Word...', 'slots' => 3],
+    'crm'   => ['label' => 'CRM / tout-en-un : priorité "gestion commerciale", ou logiciel actuel Pennylane, Sage, Cegid ou EBP', 'slots' => 2],
 ];
 
 $flash = null;
@@ -49,6 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $promo = trim((string) ($raw['promo'] ?? ''));
                 if ($promo !== '') {
                     $entry['promo'] = $promo;
+                }
+                if (!empty($raw['topPick'])) {
+                    $entry['topPick'] = true;
                 }
                 $slots[] = $entry;
             }
@@ -113,6 +119,12 @@ $catalog = flatfile_read_json(AFFILIATE_LINKS_PATH, []);
           <div class="admin-field">
             <label>Texte du bouton (optionnel)</label>
             <input type="text" name="fields[<?= $bucket ?>][<?= $slot ?>][ctaText]" value="<?= htmlspecialchars($entry['ctaText'] ?? '', ENT_QUOTES) ?>" placeholder="Découvrir →" />
+          </div>
+          <div class="admin-field">
+            <label>
+              <input type="checkbox" name="fields[<?= $bucket ?>][<?= $slot ?>][topPick]" value="1" <?= !empty($entry['topPick']) ? 'checked' : '' ?> />
+              Meilleur choix (badge "★ Meilleur choix" + bordure mise en avant sur la carte)
+            </label>
           </div>
         </fieldset>
       <?php endfor; ?>
