@@ -55,6 +55,7 @@ Open `http://localhost:8080` in your browser either way.
 ├── index.html          # Page 1 — Landing page / hero
 ├── quiz.html           # Pages 2–4 — Quiz steps (JS-driven, single file)
 ├── results.html        # Page 5 — Personalised results + lead capture form
+├── merci.html          # Post-submission thank-you page (auto-redirects home)
 ├── blog.html           # Blog — 3 SEO articles + lead capture CTA
 ├── dev-server.js       # Local-only: static files + /api/* emulation (see Local Development)
 │
