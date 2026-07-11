@@ -217,3 +217,15 @@ body {
 }
 .media-picker-upload .hint { flex-basis: 100%; margin: 0; font-size: .75rem; color: #748089; }
 #media-picker-upload-status.is-error { color: var(--danger); }
+#pdf-picker-upload-status.is-error { color: var(--danger); }
+
+/* ── PDF picker list (lead-magnet PDF field) — row list, not thumbnails ── */
+.admin-list-files { display: flex; flex-direction: column; gap: .5rem; }
+.admin-file-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: .6rem .85rem;
+  background: #fff; text-align: left; font: inherit; cursor: pointer;
+}
+.admin-file-item:hover { border-color: var(--teal); }
+.admin-file-item .name { font-weight: 600; word-break: break-all; }
+.admin-file-item .meta { flex-shrink: 0; font-size: .75rem; color: #748089; }

@@ -21,7 +21,16 @@ if (!$valid) {
     exit;
 }
 
-$pdfPath = __DIR__ . '/../server/assets/sample.pdf';
+// The admin panel's "PDF (lead magnet)" section lets an admin pick which
+// server/assets/*.pdf is active; content/site-settings.json is the single
+// source of truth for that choice (shared with the Node twins). Falls back
+// to the original fixed filename if the setting is missing or malformed.
+$settings = json_decode((string) @file_get_contents(__DIR__ . '/../content/site-settings.json'), true);
+$activeFilename = is_array($settings) && !empty($settings['leadMagnetPdf']) && is_string($settings['leadMagnetPdf'])
+    ? basename($settings['leadMagnetPdf'])
+    : 'sample.pdf';
+
+$pdfPath = __DIR__ . '/../server/assets/' . $activeFilename;
 if (!is_file($pdfPath)) {
     header('Location: /', true, 302);
     exit;

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRichTextEditors();
   initContentBlocks();
   initMediaPicker();
+  initPdfPicker();
   initBadgeSelect();
 });
 
@@ -382,6 +383,116 @@ function initMediaPicker() {
           renderMediaGrid();
         }
         selectPath(data.path);
+        if (uploadStatus) uploadStatus.textContent = '';
+        closePicker();
+      } catch (err) {
+        if (uploadStatus) {
+          uploadStatus.textContent = 'Échec du téléversement : ' + err.message;
+          uploadStatus.classList.add('is-error');
+        }
+      } finally {
+        uploadBtn.disabled = false;
+        uploadInput.value = '';
+      }
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PDF PICKER — file-list browser for the lead-magnet PDF field
+   (admin/sections/pdf.php). Same overlay/upload shell as the image media
+   picker above, but PDFs aren't image-previewable, so the grid is a plain
+   list of filename/size/date rows instead of thumbnails.
+═══════════════════════════════════════════ */
+function initPdfPicker() {
+  const overlay = document.getElementById('pdf-picker-overlay');
+  const list = document.getElementById('pdf-picker-list');
+  const closeBtn = document.getElementById('pdf-picker-close');
+  const dataEl = document.getElementById('pdf-files-data');
+  const uploadBtn = document.getElementById('pdf-picker-upload-btn');
+  const uploadInput = document.getElementById('pdf-picker-file');
+  const uploadStatus = document.getElementById('pdf-picker-upload-status');
+  if (!overlay || !list || !closeBtn || !dataEl) return;
+
+  let files = [];
+  try {
+    files = JSON.parse(dataEl.textContent || '[]');
+  } catch {
+    files = [];
+  }
+
+  function renderList() {
+    if (!files.length) {
+      list.innerHTML = '<p class="hint">Aucun PDF téléversé pour le moment.</p>';
+      return;
+    }
+    list.innerHTML = files.map((f) => `<button type="button" class="admin-file-item" data-filename="${escapeForBlockAttr(f.filename)}">
+      <span class="name">${escapeForBlockHtml(f.filename)}</span>
+      <span class="meta">${escapeForBlockHtml(String(f.sizeKo))} Ko — ${escapeForBlockHtml(f.mtime)}</span>
+    </button>`).join('');
+  }
+  renderList();
+
+  let targetInput = null;
+  const closePicker = () => { overlay.hidden = true; targetInput = null; };
+  const selectFile = (filename) => {
+    if (!targetInput) return;
+    targetInput.value = filename;
+    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  document.addEventListener('click', (e) => {
+    const browseBtn = e.target.closest('[data-role="browse-pdf"]');
+    if (!browseBtn) return;
+    e.preventDefault();
+    targetInput = browseBtn.dataset.target ? document.getElementById(browseBtn.dataset.target) : null;
+    if (uploadStatus) uploadStatus.textContent = '';
+    overlay.hidden = false;
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.admin-file-item');
+    if (!item || !targetInput) return;
+    selectFile(item.dataset.filename);
+    closePicker();
+  });
+
+  closeBtn.addEventListener('click', closePicker);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closePicker(); });
+
+  if (uploadBtn && uploadInput) {
+    uploadBtn.addEventListener('click', () => uploadInput.click());
+
+    uploadInput.addEventListener('change', async () => {
+      const file = uploadInput.files && uploadInput.files[0];
+      if (!file) return;
+
+      uploadBtn.disabled = true;
+      if (uploadStatus) {
+        uploadStatus.textContent = 'Téléversement en cours…';
+        uploadStatus.classList.remove('is-error');
+      }
+
+      const formData = new FormData();
+      formData.append('pdf', file);
+      formData.append('csrf_token', overlay.dataset.csrf || '');
+
+      try {
+        const resp = await fetch('upload-pdf', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.error || `HTTP ${resp.status}`);
+        }
+        const existing = files.find((f) => f.filename === data.filename);
+        if (existing) {
+          existing.sizeKo = data.sizeKo;
+          existing.mtime = data.mtime;
+        } else {
+          files.push({ filename: data.filename, sizeKo: data.sizeKo, mtime: data.mtime });
+          files.sort((a, b) => a.filename.localeCompare(b.filename));
+        }
+        renderList();
+        selectFile(data.filename);
         if (uploadStatus) uploadStatus.textContent = '';
         closePicker();
       } catch (err) {

@@ -17,6 +17,7 @@ const SITE_SETTINGS_DEFAULTS = [
     'bingSiteVerification' => '',
     'favicon' => '',
     'metaPixelId' => '',
+    'leadMagnetPdf' => 'sample.pdf',
 ];
 
 const SITE_SETTINGS_STATIC_FILES = ['index.html', 'quiz.html', 'results.html', 'blog.html', 'mentions-legales.html', 'politique-confidentialite.html'];

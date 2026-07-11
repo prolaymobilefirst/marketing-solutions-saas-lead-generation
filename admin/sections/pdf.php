@@ -1,32 +1,61 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../includes/uploads.php';
+require_once __DIR__ . '/../includes/site_settings.php';
 
-const LEAD_MAGNET_PDF_PATH = __DIR__ . '/../../server/assets/sample.pdf';
-const PDF_MAX_BYTES = 15 * 1024 * 1024;
+const LEAD_MAGNET_DIR = __DIR__ . '/../../server/assets';
 
 $flash = null;
 $flashType = 'success';
 
+/** Confirms $filename is a plain basename that resolves to a real .pdf
+ *  file inside server/assets — a hand-edited field value can't point
+ *  outside it or reference a non-PDF file. */
+function pdf_resolve_library_filename(string $filename): ?string
+{
+    $base = basename($filename);
+    if ($base === '' || $base !== $filename || !str_ends_with(strtolower($base), '.pdf')) {
+        return null;
+    }
+    return is_file(LEAD_MAGNET_DIR . '/' . $base) ? $base : null;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
     try {
-        if (empty($_FILES['pdf']) || $_FILES['pdf']['error'] === UPLOAD_ERR_NO_FILE) {
-            throw new UploadError('Choisissez un fichier PDF à téléverser.');
+        $filename = pdf_resolve_library_filename(trim((string) ($_POST['pdf_filename'] ?? '')));
+        if ($filename === null) {
+            throw new RuntimeException('Choisissez un PDF valide.');
         }
-        $validated = validate_uploaded_file($_FILES['pdf'], UPLOAD_PDF_MIME_EXT, PDF_MAX_BYTES);
-        move_validated_upload($validated, LEAD_MAGNET_PDF_PATH);
-        $flash = 'Le PDF du lead magnet a été remplacé.';
+
+        $settings = site_settings_read();
+        $settings['leadMagnetPdf'] = $filename;
+        site_settings_save($settings);
+
+        $flash = 'Le PDF du lead magnet a été mis à jour.';
     } catch (Throwable $e) {
         $flash = $e->getMessage();
         $flashType = 'error';
     }
 }
 
-$exists = is_file(LEAD_MAGNET_PDF_PATH);
-$size = $exists ? filesize(LEAD_MAGNET_PDF_PATH) : 0;
-$mtime = $exists ? filemtime(LEAD_MAGNET_PDF_PATH) : null;
+$settings = site_settings_read();
+$activeFilename = $settings['leadMagnetPdf'];
+$activePath = LEAD_MAGNET_DIR . '/' . $activeFilename;
+$activeExists = $activeFilename !== '' && is_file($activePath);
+
+$libraryFiles = [];
+foreach (scandir(LEAD_MAGNET_DIR) ?: [] as $entry) {
+    if (!str_ends_with(strtolower($entry), '.pdf') || !is_file(LEAD_MAGNET_DIR . '/' . $entry)) {
+        continue;
+    }
+    $libraryFiles[] = [
+        'filename' => $entry,
+        'sizeKo' => (int) round(filesize(LEAD_MAGNET_DIR . '/' . $entry) / 1024),
+        'mtime' => date('d/m/Y H:i', (int) filemtime(LEAD_MAGNET_DIR . '/' . $entry)),
+    ];
+}
+usort($libraryFiles, fn($a, $b) => strcmp($a['filename'], $b['filename']));
 ?>
 <h2>PDF — Plan d'action (lead magnet)</h2>
 
@@ -36,22 +65,47 @@ $mtime = $exists ? filemtime(LEAD_MAGNET_PDF_PATH) : null;
 
 <div class="admin-card">
   <h3>Fichier actuel</h3>
-  <?php if ($exists): ?>
-    <p><?= round($size / 1024) ?> Ko — modifié le <?= date('d/m/Y H:i', $mtime) ?></p>
+  <?php if ($activeExists): ?>
+    <p><?= htmlspecialchars($activeFilename, ENT_QUOTES) ?> — <?= round(filesize($activePath) / 1024) ?> Ko — modifié le <?= date('d/m/Y H:i', filemtime($activePath)) ?></p>
   <?php else: ?>
-    <p>Aucun PDF n'est actuellement en place — le téléchargement échouera tant qu'aucun fichier n'est téléversé.</p>
+    <p>Aucun PDF n'est actuellement en place — le téléchargement échouera tant qu'aucun fichier n'est sélectionné.</p>
   <?php endif; ?>
   <p class="hint">Ce fichier n'est jamais accessible directement par URL : il n'est servi qu'après une soumission de formulaire réussie, via un jeton signé à courte durée de vie (voir /api/download-pdf).</p>
 </div>
 
 <div class="admin-card">
-  <h3>Remplacer le PDF</h3>
-  <form method="post" enctype="multipart/form-data">
+  <h3>Choisir le PDF actif</h3>
+  <form method="post">
     <?= csrf_field() ?>
     <div class="admin-field">
-      <input type="file" name="pdf" accept="application/pdf" required />
-      <span class="hint">PDF uniquement — 15 Mo maximum.</span>
+      <label>Fichier PDF</label>
+      <div class="media-field-row">
+        <input type="text" name="pdf_filename" id="pdf-filename" value="<?= htmlspecialchars($activeFilename, ENT_QUOTES) ?>" readonly />
+        <button type="button" class="admin-btn secondary" data-role="browse-pdf" data-target="pdf-filename">Parcourir…</button>
+      </div>
+      <span class="hint">Choisissez un PDF déjà téléversé ou téléversez-en un nouveau — 15 Mo maximum.</span>
     </div>
-    <button class="admin-btn" type="submit">Téléverser et remplacer</button>
+    <button class="admin-btn" type="submit">Enregistrer</button>
   </form>
+</div>
+
+<script id="pdf-files-data" type="application/json"><?= json_encode($libraryFiles, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '[]' ?></script>
+<div class="media-picker-overlay" id="pdf-picker-overlay" data-csrf="<?= htmlspecialchars(csrf_token(), ENT_QUOTES) ?>" hidden>
+  <div class="media-picker-modal">
+    <div class="media-picker-head">
+      <h3>Choisir un PDF</h3>
+      <button type="button" id="pdf-picker-close" class="admin-btn secondary">Fermer</button>
+    </div>
+    <div class="media-picker-upload">
+      <input type="file" id="pdf-picker-file" accept=".pdf" hidden />
+      <button type="button" id="pdf-picker-upload-btn" class="admin-btn">+ Téléverser depuis mon ordinateur</button>
+      <span class="hint">PDF uniquement — 15 Mo maximum.</span>
+      <span class="hint" id="pdf-picker-upload-status"></span>
+    </div>
+    <div class="admin-list-files" id="pdf-picker-list">
+      <?php if (!$libraryFiles): ?>
+        <p class="hint">Aucun PDF téléversé pour le moment.</p>
+      <?php endif; ?>
+    </div>
+  </div>
 </div>
