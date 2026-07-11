@@ -6,7 +6,7 @@ A lightweight, mobile-first lead generation funnel in French that guides visitor
 
 - Pure HTML5, CSS3, Vanilla JavaScript — no frameworks, no build tools
 - Static files — deployable to Netlify or Vercel
-- Two tiny serverless functions (`netlify/functions/` + `api/`) proxy the Make.com webhook and gate the PDF download — see [PDF Download Protection](#pdf-download-protection)
+- Two tiny serverless functions (`netlify/functions/` + `api/`) proxy the Make.com webhook server-side — see [PDF Delivery](#pdf-delivery)
 
 ---
 
@@ -25,23 +25,20 @@ python3 -m http.server 8080
 npx serve .
 ```
 
-**If you need to test the lead form or the PDF download gate:** a plain
-static server returns 404 on `/api/submit-lead` and `/api/download-pdf` —
-those only exist once Netlify/Vercel run their function runtime, which needs
-an account login even for local `netlify dev`/`vercel dev`. Use the included
-zero-dependency dev server instead, which emulates `/api/*` by calling the
-same `api/*.js` handlers directly:
+**If you need to test the lead form:** a plain static server returns 404 on
+`/api/submit-lead` — it only exists once Netlify/Vercel run their function
+runtime, which needs an account login even for local `netlify dev`/`vercel
+dev`. Use the included zero-dependency dev server instead, which emulates
+`/api/*` by calling the same `api/*.js` handlers directly:
 
 ```bash
-PDF_TOKEN_SECRET=local-dev-secret MAKE_WEBHOOK_URL=https://webhook.site/your-test-id node dev-server.js 8080
+MAKE_WEBHOOK_URL=https://webhook.site/your-test-id node dev-server.js 8080
 ```
 
 `MAKE_WEBHOOK_URL` is optional but recommended for local testing — without
 it, `submit-lead` calls the real production webhook hardcoded in
 `lib/submit-lead.js`. Point it at a [webhook.site](https://webhook.site) URL
-(or similar) to inspect submissions without touching production. If
-`PDF_TOKEN_SECRET` is omitted, `dev-server.js` falls back to an insecure
-default and logs a warning — fine for local use, never for deployment.
+(or similar) to inspect submissions without touching production.
 
 Open `http://localhost:8080` in your browser either way.
 
@@ -79,31 +76,27 @@ Open `http://localhost:8080` in your browser either way.
 │
 ├── server/
 │   └── assets/
-│       └── sample.pdf  # The lead-magnet PDF. NOT publicly served — only
-│                       # readable by download-pdf, never at a static URL.
+│       └── sample.pdf  # The lead-magnet PDF. Kept for reference only —
+│                       # no page or API serves this file; delivery is by
+│                       # Make.com email only (see "PDF Delivery" below).
 │
 ├── lib/
-│   ├── pdf-token.js    # Signs/verifies the short-lived PDF download token
 │   └── submit-lead.js  # Validates the form payload, proxies Make.com
 │
 ├── netlify/functions/
-│   ├── submit-lead.js  # POST /api/submit-lead  (Netlify)
-│   └── download-pdf.js # GET  /api/download-pdf (Netlify)
+│   └── submit-lead.js  # POST /api/submit-lead  (Netlify)
 │
 ├── api/
-│   ├── submit-lead.js   # POST /api/submit-lead  (Vercel)
-│   └── download-pdf.js  # GET  /api/download-pdf (Vercel)
+│   └── submit-lead.js   # POST /api/submit-lead  (Vercel)
 │
-├── api-php/             # PHP twins of api/ — NOT named api/ on purpose: Vercel's
+├── api-php/             # PHP twin of api/ — NOT named api/ on purpose: Vercel's
 │   │                    # build scans api/ and rejects a .js/.php pair sharing a
 │   │                    # basename as a "conflicting path". .htaccess rewrites
-│   │                    # /api/submit-lead and /api/download-pdf here on Apache.
-│   ├── submit-lead.php  # POST /api/submit-lead  (Hostinger/Apache+PHP)
-│   └── download-pdf.php # GET  /api/download-pdf (Hostinger/Apache+PHP)
+│   │                    # /api/submit-lead here on Apache.
+│   └── submit-lead.php  # POST /api/submit-lead  (Hostinger/Apache+PHP)
 │
 ├── php/                # Shared PHP libs for the lead funnel (PHP twin of lib/*.js)
 │   ├── config.php        # env var (or config.local.php) reader
-│   ├── pdf-token.php      # HMAC sign/verify, same scheme as lib/pdf-token.js
 │   └── submit-lead.php   # payload validation + Make.com proxy (cURL)
 │
 ├── admin/               # Flat-file CMS admin panel (PHP — see "Admin Panel" below)
@@ -139,8 +132,8 @@ Open `http://localhost:8080` in your browser either way.
 
 The lead capture form (on `results.html` and `blog.html`) no longer calls Make.com
 directly from the browser — it posts to `/api/submit-lead`, a serverless function
-that proxies Make.com server-side. See [PDF Download Protection](#pdf-download-protection)
-for why.
+that proxies Make.com server-side, keeping the webhook URL off the client. See
+[PDF Delivery](#pdf-delivery) for how the PDF itself reaches the visitor.
 
 **Step 1 — Create your Make.com scenario:**
 1. Log in to [Make.com](https://www.make.com)
@@ -182,52 +175,31 @@ If unset, the functions fall back to the URL currently hardcoded in `lib/submit-
 
 ---
 
-## PDF Download Protection
+## PDF Delivery
 
-The lead-magnet PDF (`server/assets/sample.pdf`) must never be downloadable
-except as the direct result of a successful Make.com webhook call — not by
-guessing a URL, not by replaying a request, not by visiting a stale link.
-A purely static site can't enforce that (any file under the published
-directory is fetchable by anyone who knows the URL), so this flow uses two
-small serverless functions instead:
+The lead-magnet PDF must never be downloadable through the site itself — not
+via the lead form, not via a direct/bookmarked URL, not in any way. The site
+has **no download endpoint and no route that ever serves the file**:
+`POST /api/submit-lead` validates the form payload, calls Make.com
+server-side (the webhook URL is never exposed to the browser), and returns
+only `{ ok: true }` — no file, no token, nothing the client could use to
+fetch a PDF. Delivery happens entirely outside this codebase: Make.com
+emails the plan to the visitor as part of the same scenario that receives
+the webhook call.
 
-1. **`POST /api/submit-lead`** — validates the form payload, calls Make.com
-   server-side (the webhook URL is never exposed to the browser), and only
-   on a genuine `2xx` response issues a short-lived signed token
-   (`lib/pdf-token.js`, 120s TTL, HMAC-SHA256 — stateless, no database).
-2. **`GET /api/download-pdf?token=...`** — verifies the token's signature
-   and expiry. Valid → streams the PDF with
-   `Content-Disposition: attachment`. Invalid, expired, or missing → **302
-   redirect to `/`**, every time, including direct/bookmarked access.
-
-The PDF itself lives in `server/assets/`, which is never part of the public
-site — it's bundled into the functions (`included_files` in `netlify.toml`
-for Netlify; Vercel includes it in the function's filesystem automatically).
-`netlify.toml` and `vercel.json` also redirect `/downloads/*` and
-`/server/*` to `/` as defense in depth.
-
-**Required environment variable (both platforms):**
-
-```
-PDF_TOKEN_SECRET=<any long random string>
-```
-
-Functions throw if this is unset — generate one with `openssl rand -hex 32`.
-
-**Note on the 120s window:** the token is stateless (no server-side
-revocation list), so it's technically replayable within that short window
-if intercepted. It is never exposed anywhere except in the one
-`submit-lead` response immediately consumed by the browser. If you need
-true single-use guarantees, swap in a small KV store (Netlify Blobs /
-Vercel KV) to mark tokens as spent.
+`server/assets/sample.pdf` (and the admin panel's "PDF (lead magnet)"
+section, which manages it) exist only so an editor has a reference copy on
+hand — that file is never read by any page or API. `netlify.toml` and
+`vercel.json` also redirect `/downloads/*` and `/server/*` to `/` as
+defense in depth, and `.htaccess` does the same on Apache.
 
 ---
 
 ## Admin Panel (Flat-File CMS)
 
 A PHP admin panel at `/admin` lets a non-technical editor manage page copy,
-images, SEO/schema, the gated lead-magnet PDF, the affiliate software
-catalog, and blog posts — all without a database. **It only runs on a
+images, SEO/schema, the reference copy of the lead-magnet PDF, the affiliate
+software catalog, and blog posts — all without a database. **It only runs on a
 PHP-capable host (Apache/Hostinger, or `php -S` locally) — Vercel and
 Netlify don't execute PHP**, so the admin panel is a no-op while the site
 is deployed there. See [Hostinger Deployment](#hostinger--php-deployment)
@@ -252,7 +224,7 @@ save never reformats or reflows markup you didn't ask to change.
 | SEO | `<title>`, meta description, meta keywords, canonical, OG tags, and raw JSON-LD per page, plus a **Global** tab for the Google Tag Manager container ID and Google/Bing site-verification codes |
 | Médiathèque | Upload/list/delete `assets/images/*` — real MIME-sniffed, extension-whitelisted, randomly renamed |
 | Favicon & Logo | Upload/replace the site favicon (ICO/PNG/SVG, synced to every page) and the header logo (WebP/PNG/JPG/SVG, patched directly into `partials/header.html` since it's a single shared partial) |
-| PDF | Replace the gated lead-magnet PDF (`server/assets/sample.pdf`) |
+| PDF | Replace the reference copy of the lead-magnet PDF (`server/assets/sample.pdf`) — kept for the editor's reference only, never served by the site |
 | Liens affiliés | CRUD over `content/affiliate-links.json` — the software catalog rendered on the results page |
 | Blog | Create/edit/delete posts (`content/blog/<slug>.json`) — saving regenerates `blog-<slug>.html` from `templates/blog-post.template.html` and refreshes `blog.html`'s article grid + `ld+json` `blogPost` list |
 
@@ -287,14 +259,14 @@ implicit coercions). To deploy there instead of Netlify/Vercel:
 
 1. Upload the whole repository to your hosting's public web root via
    Hostinger's File Manager, Git deploy, or FTP.
-2. Set `PDF_TOKEN_SECRET` (and optionally `MAKE_WEBHOOK_URL`). If your
-   plan doesn't expose a real environment-variable panel for plain PHP,
-   copy `php/config.local.php.example` to `php/config.local.php`
-   (gitignored) and fill in the constants there instead.
+2. Set `MAKE_WEBHOOK_URL` (optional — falls back to the URL hardcoded in
+   `php/submit-lead.php`). If your plan doesn't expose a real
+   environment-variable panel for plain PHP, copy
+   `php/config.local.php.example` to `php/config.local.php` (gitignored)
+   and fill in the constant there instead.
 3. Make sure `mod_rewrite` and `mod_headers` are enabled — `.htaccess` at
    the project root already routes `/api/submit-lead` →
-   `api-php/submit-lead.php` and `/api/download-pdf` →
-   `api-php/download-pdf.php` (Apache only; Netlify/Vercel keep using their
+   `api-php/submit-lead.php` (Apache only; Netlify/Vercel keep using their
    own Node functions in `api/`, so nothing else changes if you stay on
    those platforms), and sets the same Cache-Control policy as the
    `_headers` (Netlify) / `vercel.json` (Vercel) configs: 1-year immutable
@@ -318,7 +290,7 @@ talking to.
 2. Log in to [Netlify](https://app.netlify.com) → **Add new site → Import an existing project**
 3. Connect your GitHub repo
 4. Set **Publish directory** to `.` (project root)
-5. Add the **`PDF_TOKEN_SECRET`** (and optionally `MAKE_WEBHOOK_URL`) environment variables in Site settings
+5. Optionally add the **`MAKE_WEBHOOK_URL`** environment variable in Site settings
 6. Click **Deploy site**
 
 The `netlify.toml` configures clean URLs automatically (e.g. `/quiz` → `quiz.html`),
@@ -330,7 +302,7 @@ The `_headers` file sets cache-control headers for all static assets.
 1. Push the repository to GitHub
 2. Log in to [Vercel](https://vercel.com) → **Add New Project**
 3. Import the GitHub repo — no build command needed
-4. Add the **`PDF_TOKEN_SECRET`** (and optionally `MAKE_WEBHOOK_URL`) environment variables in Project settings
+4. Optionally add the **`MAKE_WEBHOOK_URL`** environment variable in Project settings
 5. Click **Deploy**
 
 The `vercel.json` configures `cleanUrls: true`. Files under `api/` are

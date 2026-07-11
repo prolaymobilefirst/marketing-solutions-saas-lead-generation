@@ -18,7 +18,6 @@ RewriteRule ^(admin|api-php|api)/ - [E=CACHE_NONE:1]
 # api/, because Vercel's build scans api/ and rejects a .js and .php file
 # sharing the same basename as a "conflicting path" — see api-php/.
 RewriteRule ^api/submit-lead$ api-php/submit-lead.php [L]
-RewriteRule ^api/download-pdf$ api-php/download-pdf.php [L]
 
 # The lead-magnet PDF and admin data must never be reachable as static
 # files — same defense-in-depth redirect already used on Netlify/Vercel.

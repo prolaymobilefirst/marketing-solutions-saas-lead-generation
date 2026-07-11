@@ -5,7 +5,6 @@ declare(strict_types=1);
    js/webhook.js needs no changes to work against either runtime. */
 
 require_once __DIR__ . '/../php/submit-lead.php';
-require_once __DIR__ . '/../php/pdf-token.php';
 
 header('Content-Type: application/json');
 
@@ -34,13 +33,4 @@ if (!submit_lead_forward_to_make($payload)) {
     exit;
 }
 
-try {
-    $token = pdf_issue_token();
-} catch (Throwable $e) {
-    error_log($e->getMessage());
-    http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'server_misconfigured']);
-    exit;
-}
-
-echo json_encode(['ok' => true, 'token' => $token]);
+echo json_encode(['ok' => true]);

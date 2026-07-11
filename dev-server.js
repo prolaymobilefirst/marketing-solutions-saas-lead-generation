@@ -2,8 +2,7 @@
 
 /* Local development only — Netlify/Vercel use their own serverless runtime
    in production. This just emulates enough of Vercel's (req, res) API to
-   exercise api/submit-lead.js and api/download-pdf.js unmodified, so the
-   PDF-gating flow can be tested without a Netlify/Vercel account.
+   exercise api/submit-lead.js unmodified, without a Netlify/Vercel account.
 
    Usage: node dev-server.js [port]   (defaults to 8080) */
 
@@ -15,10 +14,6 @@ const { URL } = require('url');
 const ROOT = __dirname;
 const PORT = process.argv[2] || process.env.PORT || 8080;
 
-if (!process.env.PDF_TOKEN_SECRET) {
-  process.env.PDF_TOKEN_SECRET = 'local-dev-secret-not-for-production';
-  console.warn('PDF_TOKEN_SECRET not set — using an insecure local-dev default. Do not deploy with this.');
-}
 if (!process.env.MAKE_WEBHOOK_URL) {
   console.warn('MAKE_WEBHOOK_URL not set — submit-lead will call the live URL hardcoded in lib/submit-lead.js.');
   console.warn('Set MAKE_WEBHOOK_URL to a test endpoint (e.g. https://webhook.site/...) to avoid hitting production.');
@@ -26,7 +21,6 @@ if (!process.env.MAKE_WEBHOOK_URL) {
 
 const apiHandlers = {
   '/api/submit-lead': require('./api/submit-lead'),
-  '/api/download-pdf': require('./api/download-pdf'),
 };
 
 const MIME = {

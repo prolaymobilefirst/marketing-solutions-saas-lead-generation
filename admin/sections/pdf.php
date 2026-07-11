@@ -68,9 +68,9 @@ usort($libraryFiles, fn($a, $b) => strcmp($a['filename'], $b['filename']));
   <?php if ($activeExists): ?>
     <p><?= htmlspecialchars($activeFilename, ENT_QUOTES) ?> — <?= round(filesize($activePath) / 1024) ?> Ko — modifié le <?= date('d/m/Y H:i', filemtime($activePath)) ?></p>
   <?php else: ?>
-    <p>Aucun PDF n'est actuellement en place — le téléchargement échouera tant qu'aucun fichier n'est sélectionné.</p>
+    <p>Aucun PDF n'est actuellement en place.</p>
   <?php endif; ?>
-  <p class="hint">Ce fichier n'est jamais accessible directement par URL : il n'est servi qu'après une soumission de formulaire réussie, via un jeton signé à courte durée de vie (voir /api/download-pdf).</p>
+  <p class="hint">Ce fichier n'est jamais servi par le site — aucune page ni aucune API ne le rend téléchargeable. Il est conservé ici uniquement pour référence ; l'envoi réel du plan d'action se fait par e-mail, automatiquement par Make.com après une soumission de formulaire réussie.</p>
 </div>
 
 <div class="admin-card">

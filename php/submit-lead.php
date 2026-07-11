@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /* PHP twin of lib/submit-lead.js — same validation rules and Make.com
-   payload shape. The browser never calls Make.com directly — this keeps
-   the webhook URL off the client and lets us gate the PDF download on a
-   genuine successful response. */
+   payload shape. The browser never calls Make.com directly, and never
+   receives the PDF — that's delivered solely by the automated email
+   Make.com sends on a genuine webhook success. */
 
 require_once __DIR__ . '/config.php';
 
@@ -76,9 +76,9 @@ function submit_lead_validate_payload(array $body): ?array
         // connexion rather than renamed, so existing mappings don't break.
         'logiciel' => $connexion,
         // Always "Oui": submit_lead_forward_to_make only runs on a genuine
-        // lead submission, and the PDF token is only issued after this call
-        // succeeds, so every row that reaches the sheet corresponds to a
-        // report having been sent.
+        // lead submission, and Make.com only emails the PDF on that same
+        // successful call, so every row that reaches the sheet corresponds
+        // to a report having been sent.
         'rapport' => 'Oui',
         'timestamp' => submit_lead_iso8601_now(),
     ];

@@ -3,10 +3,6 @@
 
 [functions]
   directory = "netlify/functions"
-  # server/assets/*.pdf: the lead-magnet library (admin/sections/pdf.php lets
-  # an admin add more and pick which one is active). content/site-settings.json:
-  # holds that active-file choice, read by download-pdf.js at request time.
-  included_files = ["server/assets/*.pdf", "content/site-settings.json"]
 
 # Proxy /api/* to Netlify Functions so client-side code can use the same
 # path on Netlify and Vercel.

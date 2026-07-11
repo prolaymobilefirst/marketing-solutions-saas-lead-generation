@@ -6,5 +6,4 @@ declare(strict_types=1);
    a Node/env-var panel). Apache hosts can instead use `SetEnv` in .htaccess
    and skip this file entirely. */
 
-define('PDF_TOKEN_SECRET', 'replace-with-a-long-random-string');
 define('MAKE_WEBHOOK_URL', 'https://hook.eu1.make.com/your-webhook-id');

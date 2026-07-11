@@ -1,6 +1,5 @@
 'use strict';
 
-const { issueToken } = require('../../lib/pdf-token');
 const { forwardToMake, validatePayload } = require('../../lib/submit-lead');
 
 exports.handler = async (event) => {
@@ -31,17 +30,9 @@ exports.handler = async (event) => {
     return { statusCode: 502, body: JSON.stringify({ ok: false, error: 'webhook_failed' }) };
   }
 
-  let token;
-  try {
-    token = issueToken();
-  } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'server_misconfigured' }) };
-  }
-
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ok: true, token }),
+    body: JSON.stringify({ ok: true }),
   };
 };
