@@ -50,7 +50,7 @@ function footer_field_value(array $fields, string $key): string
 }
 ?>
 <h2>Pied de page</h2>
-<p class="hint">Gère le bandeau de logos partenaires, le bas de page et la bannière partenaire ("Marketing Solutions SaaS") affichés sur toutes les pages.</p>
+<p class="hint">Gère le bandeau de logos partenaires, le bas de page et la bannière d'aide ("Besoin d'aide pour comprendre la réforme 2026 ?") affichés sur toutes les pages.</p>
 
 <?php if ($flash): ?>
   <div class="admin-flash <?= $flashType ?>"><?= htmlspecialchars($flash, ENT_QUOTES) ?></div>
@@ -112,17 +112,17 @@ function footer_field_value(array $fields, string $key): string
   </div>
 
   <div class="admin-card">
-    <h3>Bannière partenaire (CTA)</h3>
+    <h3>Bannière d'aide (réforme 2026)</h3>
     <div class="admin-field">
-      <label>Texte complet (desktop)</label>
+      <label>Titre (desktop)</label>
       <input type="text" name="fields[banner.labelFull]" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.labelFull'), ENT_QUOTES) ?>" />
     </div>
     <div class="admin-field">
-      <label>Texte court (mobile)</label>
+      <label>Titre (mobile)</label>
       <input type="text" name="fields[banner.labelShort]" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.labelShort'), ENT_QUOTES) ?>" />
     </div>
     <div class="admin-field">
-      <label>Logo</label>
+      <label>Icône</label>
       <div class="media-field-row">
         <input type="text" name="fields[banner.logo.src]" id="banner-logo-src" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.logo.src'), ENT_QUOTES) ?>" list="media-files" />
         <button type="button" class="admin-btn secondary" data-role="browse-image" data-target="banner-logo-src">Parcourir…</button>
@@ -130,13 +130,12 @@ function footer_field_value(array $fields, string $key): string
       <div class="content-block-image-preview" data-preview-for="banner-logo-src"><?php $bannerSrcVal = footer_field_value($bannerFields, 'banner.logo.src'); ?><?= $bannerSrcVal !== '' ? '<img src="../' . htmlspecialchars($bannerSrcVal, ENT_QUOTES) . '" alt="" />' : '' ?></div>
     </div>
     <div class="admin-field">
-      <label>Logo — texte alternatif (alt)</label>
+      <label>Icône — texte alternatif (alt)</label>
       <input type="text" name="fields[banner.logo.alt]" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.logo.alt'), ENT_QUOTES) ?>" />
     </div>
     <div class="admin-field">
-      <label>Texte de la pastille</label>
+      <label>Texte descriptif</label>
       <textarea name="fields[banner.pillText]"><?= htmlspecialchars(footer_field_value($bannerFields, 'banner.pillText'), ENT_QUOTES) ?></textarea>
-      <p class="hint">Peut contenir un retour à la ligne HTML : <code>&lt;br&gt;</code>.</p>
     </div>
     <div class="admin-field">
       <label>Texte du bouton</label>
@@ -144,7 +143,7 @@ function footer_field_value(array $fields, string $key): string
     </div>
     <div class="admin-field">
       <label>Lien du bouton (URL)</label>
-      <input type="text" name="fields[banner.ctaHref]" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.ctaHref'), ENT_QUOTES) ?>" placeholder="https://..." />
+      <input type="text" name="fields[banner.ctaHref]" value="<?= htmlspecialchars(footer_field_value($bannerFields, 'banner.ctaHref'), ENT_QUOTES) ?>" placeholder="blog.html" />
     </div>
   </div>
 
