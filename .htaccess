@@ -1,6 +1,14 @@
 Options -MultiViews
 RewriteEngine On
 
+# Force UTF-8 in the HTTP Content-Type header. Without this, LiteSpeed/Apache
+# sends a bare "Content-Type: text/html" (no charset param). Combined with
+# X-Content-Type-Options: nosniff below, that leaves the HTTP header with no
+# charset and browsers unable to sniff — the earliest <meta charset="UTF-8">
+# in <head> alone isn't enough on mobile Safari, which produces mojibake
+# (e.g. "Ã©") on accented characters as a result.
+AddDefaultCharset UTF-8
+
 # Cache-Control tagging — env vars consumed by the mod_headers block at the
 # bottom of this file. Mirrors the Netlify (_headers) / Vercel (vercel.json)
 # cache policy so Apache/Hostinger gets the same behaviour. Must run before
