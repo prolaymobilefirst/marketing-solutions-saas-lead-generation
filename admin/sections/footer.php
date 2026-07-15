@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/htmlpatch.php';
 const FOOTER_PARTIAL_PATH = __DIR__ . '/../../partials/footer.html';
 const BANNER_PARTIAL_PATH = __DIR__ . '/../../partials/partner-banner.html';
 
-const FOOTER_PARTNER_SLUGS = ['abby', 'tiime', 'indy', 'karlia', 'axonaut'];
+const FOOTER_PARTNER_SLUGS = ['abby', 'tiime', 'indy', 'karlia', 'axonaut', 'shine'];
 
 $flash = null;
 $flashType = 'success';
