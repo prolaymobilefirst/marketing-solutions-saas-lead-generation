@@ -40,15 +40,84 @@
   <link rel="preload" href="assets/images/conforme-2026.webp" as="image" fetchpriority="high" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.min.css?v=20260715b" />
-  <script type="application/ld+json" data-cms="seo.schema" data-cms-kind="json" data-cms-label="Schema (JSON-LD)">
-  {
+  <script type="application/ld+json" data-cms="seo.schema" data-cms-kind="json" data-cms-label="Schema (JSON-LD)">{
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Facturation Électronique 2026",
-    "url": "https://www.facturation2026.fr/",
-    "description": "Plateforme indépendante d'information et de diagnostic sur la réforme de la facturation électronique 2026 en France."
-  }
-  </script>
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://portail-facture-2026.fr/#organization",
+            "name": "Portail Facture 2026",
+            "url": "https://portail-facture-2026.fr/",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://portail-facture-2026.fr/assets/images/logo.png"
+            },
+            "areaServed": {
+                "@type": "Country",
+                "name": "France"
+            },
+            "knowsAbout": [
+                "Facturation électronique",
+                "Réforme facturation 2026",
+                "Plateforme de Dématérialisation Partenaire (PDP)",
+                "Conformité e-invoicing France"
+            ]
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://portail-facture-2026.fr/#website",
+            "url": "https://portail-facture-2026.fr/",
+            "name": "Portail Facture 2026",
+            "inLanguage": "fr-FR",
+            "publisher": {
+                "@id": "https://portail-facture-2026.fr/#organization"
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://portail-facture-2026.fr/#webpage",
+            "url": "https://portail-facture-2026.fr/",
+            "name": "Facturation Électronique 2026 — Diagnostic Gratuit",
+            "description": "Préparez votre entreprise à la réforme de la facturation électronique 2026. Diagnostic personnalisé gratuit en moins de 2 minutes.",
+            "inLanguage": "fr-FR",
+            "isPartOf": {
+                "@id": "https://portail-facture-2026.fr/#website"
+            },
+            "primaryImageOfPage": {
+                "@type": "ImageObject",
+                "url": "https://portail-facture-2026.fr/assets/images/conforme-2026.webp"
+            },
+            "potentialAction": {
+                "@type": "Action",
+                "name": "Commencer le diagnostic",
+                "target": "https://portail-facture-2026.fr/quiz.html"
+            }
+        },
+        {
+            "@type": "Service",
+            "@id": "https://portail-facture-2026.fr/#service",
+            "name": "Diagnostic de conformité Facturation Électronique 2026",
+            "serviceType": "Audit de préparation à la facturation électronique",
+            "provider": {
+                "@id": "https://portail-facture-2026.fr/#organization"
+            },
+            "areaServed": {
+                "@type": "Country",
+                "name": "France"
+            },
+            "audience": {
+                "@type": "BusinessAudience",
+                "name": "TPE / PME françaises"
+            },
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "EUR",
+                "description": "Diagnostic personnalisé gratuit en moins de 2 minutes"
+            }
+        }
+    ]
+}</script>
 </head>
 <body>
 <!-- GTM_BODY_START -->
