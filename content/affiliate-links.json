@@ -35,7 +35,7 @@
         },
         {
             "name": "Qonto",
-            "icon": "assets/images/qonto-b5d8181bbcb5.webp",
+            "icon": "assets/images/qonto.webp",
             "badge": "Partenaire",
             "desc": "Compte pro et facturation en ligne pour entreprises et indépendants.",
             "href": "https://lb.affilae.com/r/?p=5ce4f2a2b6302009e29d84f3&af=2868&lp=https%3A%2F%2Fqonto.com%2Ffr%3Futm_medium%3Daffilaefr%26utm_source%3Daffiliate%26utm_campaign%3Dportail-facture-2026"
@@ -60,6 +60,16 @@
             "href": "https://axonaut.com/?a=AEB3CH1324",
             "ctaText": "Découvrir →",
             "promo": "1 MOIS OFFERT"
+        }
+    ],
+    "compta": [
+        {
+            "name": "Pennylane",
+            "icon": "assets/images/pennylane.webp",
+            "badge": "Partenaire",
+            "desc": "Comptabilité automatisée & facturation tout-en-un. Automatisez vos déclarations URSSAF/TVA.",
+            "href": "https://lb.affilae.com/r/?p=608019f0b27a1f2e0480a96d&af=568&lp=https%3A%2F%2Fwww.pennylane.com%2Ffr%3Futm_source%3Dafl%26utm_campaign%3Dpennylane-fr%26utm_medium%3Dportail-facture-2026",
+            "ctaText": "Découvrir →"
         }
     ]
 }
