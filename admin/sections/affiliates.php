@@ -11,12 +11,12 @@ const AFFILIATE_LINKS_PATH = __DIR__ . '/../../content/affiliate-links.json';
    already Pennylane (falls back to "crm" in that case). Otherwise Step 3's
    current software decides: Sage, Cegid and EBP route to "crm" as the
    closest analog (Cegid was never given its own recommendation set).
-   Slot count varies per bucket — "autre" shows 5 recommendations, "crm" 2,
+   Slot count varies per bucket — "autre" shows 5 recommendations, "crm" 3,
    "compta" 1 — there is no add/delete UI because the counts are
    architecturally fixed per bucket. */
 const CONNEXION_BUCKETS = [
     'autre'  => ['label' => 'Logiciel actuel : Autre logiciel, Excel, Word...', 'slots' => 5],
-    'crm'    => ['label' => 'CRM / tout-en-un : priorité "gestion commerciale", ou logiciel actuel Sage, Cegid ou EBP', 'slots' => 2],
+    'crm'    => ['label' => 'CRM / tout-en-un : priorité "gestion commerciale", ou logiciel actuel Sage, Cegid ou EBP', 'slots' => 3],
     'compta' => ['label' => 'Comptabilité automatisée : priorité "automatiser ma comptabilité" (sauf logiciel actuel déjà Pennylane)', 'slots' => 1],
 ];
 
